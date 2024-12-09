@@ -1,6 +1,7 @@
 import { useGesture } from "@use-gesture/react";
 import {
   createContext,
+  createRef,
   RefObject,
   useCallback,
   useContext,
@@ -91,6 +92,10 @@ export interface ViewportContextType {
     },
   ) => boolean;
   setViewportRef: (ref: RefObject<HTMLDivElement>) => void;
+  viewportRef: RefObject<HTMLDivElement> | undefined;
+  zoomRef: RefObject<number>;
+  isPinching: boolean;
+  setIsPinching: (isPinching: boolean) => void;
 }
 
 export const defaultViewportContext = {
@@ -123,6 +128,12 @@ export const defaultViewportContext = {
   setViewportRef() {
     throw new Error("Viewport context not initialized");
   },
+  viewportRef: undefined,
+  zoomRef: createRef<number>(),
+  isPinching: false,
+  setIsPinching() {
+    throw new Error("Viewport context not initialized");
+  },
 } satisfies ViewportContextType;
 
 export const ViewportContext = createContext<ViewportContextType>(
@@ -144,27 +155,37 @@ export const useViewportContext = ({
   maxZoom = 5,
   defaultZoom = 1,
 }: ViewportProps) => {
+  const zoomRef = useRef(defaultZoom);
   const [zoom, setZoom] = useState(defaultZoom);
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
+  const [isPinching, setIsPinching] = useState(false);
+
   const pages = useRef(
     new Map<number, { containerRef: RefObject<HTMLDivElement> }>(),
   );
+
   const viewportRef = useRef<HTMLDivElement | null>(null);
+
   const [visiblePages, setVisiblePages] = useState(new Map<number, number>());
 
   const [currentPage, setCurrentPage] = useState(1);
 
   return {
     zoom,
+    zoomRef,
     minZoom,
     maxZoom,
     setZoom: (zoom) => {
       setZoom((prevZoom) => {
         if (typeof zoom === "function") {
-          return clamp(zoom(prevZoom), minZoom, maxZoom);
+          const newZoom = clamp(zoom(prevZoom), minZoom, maxZoom);
+          zoomRef.current = newZoom;
+          return newZoom;
         }
-        return clamp(zoom, minZoom, maxZoom);
+        const newZoom = clamp(zoom, minZoom, maxZoom);
+        zoomRef.current = newZoom;
+        return newZoom;
       });
     },
     translateX,
@@ -235,6 +256,9 @@ export const useViewportContext = ({
     setViewportRef: (ref) => {
       viewportRef.current = ref.current;
     },
+    viewportRef,
+    isPinching,
+    setIsPinching,
   } satisfies ViewportContextType;
 };
 
@@ -309,12 +333,15 @@ export const useViewportContainer = ({
   elementWrapperRef: RefObject<HTMLDivElement>;
   elementRef: RefObject<HTMLDivElement>;
 }) => {
+  const [initialized, setInitialized] = useState(false);
   const [origin, setOrigin] = useState<[number, number]>([0, 0]);
 
-  const { minZoom, maxZoom, setZoom, setViewportRef, zoom } = useViewport();
+  const { minZoom, maxZoom, setZoom, setViewportRef, zoom, setIsPinching } =
+    useViewport();
 
   useEffect(() => {
     setViewportRef(containerRef);
+    setInitialized(true);
   }, [containerRef.current]);
 
   const transformations = useRef<{
@@ -461,6 +488,8 @@ export const useViewportContainer = ({
 
         return newMemo;
       },
+      onPinchStart: () => setIsPinching(true),
+      onPinchEnd: () => setIsPinching(false),
     },
     {
       target: containerRef,
@@ -469,6 +498,7 @@ export const useViewportContainer = ({
 
   return {
     origin,
+    initialized,
   };
 };
 

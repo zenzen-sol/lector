@@ -3,14 +3,14 @@ import { HTMLProps, useRef } from "react";
 import { Primitive } from "../Primitive";
 
 export const Viewport = ({ children, ...props }: HTMLProps<HTMLDivElement>) => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const elementWrapperRef = useRef<HTMLDivElement>(null);
   const elementRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  useViewportContainer({
+  const { initialized } = useViewportContainer({
     elementRef: elementRef,
     elementWrapperRef: elementWrapperRef,
-    containerRef: containerRef,
+    containerRef,
   });
 
   return (
@@ -23,6 +23,7 @@ export const Viewport = ({ children, ...props }: HTMLProps<HTMLDivElement>) => {
         ...props.style,
         position: "relative",
         overflow: "auto",
+        width: "100%",
       }}
     >
       <div
@@ -43,7 +44,7 @@ export const Viewport = ({ children, ...props }: HTMLProps<HTMLDivElement>) => {
             margin: "0 auto",
           }}
         >
-          {children}
+          {initialized ? children : null}
         </div>
       </div>
     </Primitive.div>

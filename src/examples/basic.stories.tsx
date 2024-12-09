@@ -41,7 +41,7 @@ export const Basic: Story = {
     >
       <Viewport className="p-4 h-full">
         <Pages>
-          <Page className="my-4">
+          <Page>
             <CanvasLayer />
           </Page>
         </Pages>
@@ -62,7 +62,7 @@ export const WithTextLayer: Story = {
     >
       <Viewport className="p-4 h-full">
         <Pages>
-          <Page className="my-4">
+          <Page>
             <CanvasLayer />
             <TextLayer />
           </Page>
@@ -84,7 +84,7 @@ export const WithInternalLinks: Story = {
     >
       <Viewport className="p-4 h-full">
         <Pages>
-          <Page className="my-4">
+          <Page>
             <CanvasLayer />
             <TextLayer />
             <AnnotationLayer />
@@ -107,7 +107,7 @@ export const WithAnnotationLayer: Story = {
     >
       <Viewport className="p-4 h-full">
         <Pages>
-          <Page className="my-4">
+          <Page>
             <CanvasLayer />
             <TextLayer />
             <AnnotationLayer />
@@ -130,7 +130,7 @@ export const WithFormControls: Story = {
     >
       <Viewport className="p-4 h-full">
         <Pages>
-          <Page className="my-4">
+          <Page>
             <CanvasLayer />
             <TextLayer />
             <AnnotationLayer />
@@ -157,7 +157,7 @@ export const WithPageControl: Story = {
       </div>
       <Viewport className="p-4">
         <Pages>
-          <Page className="my-4">
+          <Page>
             <CanvasLayer />
             <TextLayer />
             <AnnotationLayer />
@@ -167,7 +167,7 @@ export const WithPageControl: Story = {
     </Root>
   ),
   args: {
-    fileURL: "brochure.pdf",
+    fileURL: "large.pdf",
   },
 };
 
@@ -186,7 +186,7 @@ export const WithZoomControl: Story = {
       </div>
       <Viewport className="p-4">
         <Pages>
-          <Page className="my-4">
+          <Page>
             <CanvasLayer />
             <TextLayer />
             <AnnotationLayer />
@@ -244,7 +244,7 @@ export const WithOutline: Story = {
           </div>
           <Viewport className="p-4 h-full">
             <Pages>
-              <Page className="my-4">
+              <Page>
                 <CanvasLayer />
                 <TextLayer />
                 <AnnotationLayer />
@@ -302,7 +302,7 @@ export const WithThumbnails: Story = {
           </div>
           <Viewport className="p-4 h-full">
             <Pages>
-              <Page className="my-4">
+              <Page>
                 <CanvasLayer />
                 <TextLayer />
                 <AnnotationLayer />
@@ -327,7 +327,7 @@ export const WithCustomLayer: Story = {
     >
       <Viewport className="p-4 h-full">
         <Pages>
-          <Page className="my-4">
+          <Page>
             <CanvasLayer />
             <CustomLayer>
               {(pageNumber) => {
@@ -360,12 +360,12 @@ export const WithHighlightLayer: Story = {
       <Root
         highlights={highlights}
         fileURL={fileURL}
-        className="bg-gray-100 border rounded-md overflow-hidden relative h-[500px]"
+        className="bg-gray-100 border rounded-md overflow-hidden relative h-[700px]"
         loader={<div className="p-4">Loading...</div>}
       >
         <Viewport className="p-4 h-full">
           <Pages>
-            <Page className="my-4">
+            <Page>
               <CanvasLayer />
               <TextLayer />
               <HighlightLayer className="bg-blue-200/70" />
@@ -389,7 +389,7 @@ export const WithHighlightLayer: Story = {
     );
   },
   args: {
-    fileURL: "pathways.pdf",
+    fileURL: "large.pdf",
   },
 };
 export const WithCustomFormLayer: Story = {
@@ -411,7 +411,7 @@ export const WithCustomFormLayer: Story = {
       >
         <Viewport className="p-4 h-full">
           <Pages>
-            <Page className="my-4">
+            <Page>
               <CanvasLayer />
               <CustomLayer>
                 {(pageNumber) => {
@@ -457,7 +457,7 @@ export const WithPDFFormValues: Story = {
       >
         <Viewport className="p-4 h-full">
           <Pages>
-            <Page className="my-4">
+            <Page>
               <CanvasLayer />
               <TextLayer />
               <AnnotationLayer />

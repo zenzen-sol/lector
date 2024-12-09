@@ -1,14 +1,16 @@
 {
-  "name": "@fileforge/pdfreader",
+  "name": "@unriddle/pdf-viewer",
   "version": "0.1.44",
   "description": "Easiest way to display and interact with PDFs from your web app.",
-  "main": "dist/pdfreader.cjs",
+  "main": "dist/pdf-viewer.cjs",
   "types": "dist/src/index.d.ts",
   "type": "module",
   "exports": {
-    "require": "./dist/pdfreader.cjs",
-    "import": "./dist/pdfreader.js",
-    "types": "./dist/src/index.d.ts"
+    ".": {
+      "import": "./dist/pdf-viewer.js",
+      "require": "./dist/pdf-viewer.cjs",
+      "types": "./dist/src/index.d.ts"
+    }
   },
   "files": [
     "dist"
@@ -64,6 +66,7 @@
     "react": ">=18"
   },
   "dependencies": {
-    "@floating-ui/react": "^0.26.28"
+    "@floating-ui/react": "^0.26.28",
+    "@tanstack/react-virtual": "^3.10.9"
   }
 }
