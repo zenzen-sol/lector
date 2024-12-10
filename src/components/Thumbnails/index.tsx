@@ -15,9 +15,7 @@ export const Thumbnail = ({
   ...props
 }: HTMLProps<HTMLCanvasElement> & { pageNumber?: number }) => {
   const { canvasRef } = useThumbnail(pageNumber);
-  const { goToPage } = useViewport();
-
-  useEffect(() => {});
+  const { pagesAPI } = useViewport();
 
   return (
     <Primitive.canvas
@@ -29,7 +27,7 @@ export const Thumbnail = ({
           props.onClick(e);
         }
 
-        goToPage(pageNumber, { smooth: false });
+        pagesAPI?.jumpToPage(pageNumber, { behavior: "auto" });
       }}
       onKeyDown={(e: any) => {
         if (props.onKeyDown) {
@@ -37,7 +35,7 @@ export const Thumbnail = ({
         }
 
         if (e.key === "Enter") {
-          goToPage(pageNumber, { smooth: false });
+          pagesAPI?.jumpToPage(pageNumber, { behavior: "auto" });
         }
       }}
       ref={canvasRef}

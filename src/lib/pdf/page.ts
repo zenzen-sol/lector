@@ -4,52 +4,31 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
 
 import { usePDFDocument } from "./document";
 import { cancellable } from "./utils";
+import { useViewport } from "../viewport";
 
 export const usePDFPageContext = (pageNumber: number) => {
-  const { pdfDocumentProxy } = usePDFDocument();
-  const [ready, setReady] = useState(false);
-  const page = useRef<PDFPageProxy | null>(null);
+  const { pageProxies } = useViewport();
 
-  useEffect(() => {
-    setReady(false);
+  const pageProxy = useMemo(() => {
+    if (!pageProxies) return null;
 
-    if (!pdfDocumentProxy) {
-      return;
-    }
-
-    const { promise: loadingTask, cancel } = cancellable(
-      pdfDocumentProxy.getPage(pageNumber),
-    );
-
-    loadingTask.then(
-      (pageProxy) => {
-        page.current = pageProxy;
-        setReady(true);
-      },
-      (error) => {
-        // eslint-disable-next-line no-console
-        console.error("Error loading PDF page", error);
-      },
-    );
-
-    return () => {
-      cancel();
-    };
-  }, [pdfDocumentProxy]);
+    return pageProxies?.[pageNumber - 1];
+  }, []);
 
   const getPDFPageProxy = useCallback(() => {
-    if (!page.current) {
+    if (!pageProxy) {
       throw new Error("PDF page not loaded");
     }
 
-    return page.current;
-  }, [page.current]);
+    return pageProxy;
+  }, [pageProxy]);
 
   return {
     context: {
@@ -58,8 +37,7 @@ export const usePDFPageContext = (pageNumber: number) => {
       },
       pageNumber,
     } satisfies PDFPageContextType,
-    ready,
-    pdfPageProxy: page.current,
+    pdfPageProxy: pageProxy,
   };
 };
 

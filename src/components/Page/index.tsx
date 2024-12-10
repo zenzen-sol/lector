@@ -13,7 +13,7 @@ export const Page = ({
   pageNumber?: number;
 }) => {
   const pageContainerRef = useRef<HTMLDivElement>(null);
-  const { ready, context } = usePDFPageContext(pageNumber);
+  const { context } = usePDFPageContext(pageNumber);
 
   usePageViewport({ pageContainerRef, pageNumber });
 
@@ -22,25 +22,23 @@ export const Page = ({
       <Primitive.div
         ref={pageContainerRef}
         style={{
-          display: ready ? "block" : "none",
+          display: "block",
         }}
       >
-        {ready && (
-          <div
-            style={
-              {
-                ...style,
-                "--scale-factor": 1,
-                position: "relative",
-                width: `${context.pdfPageProxy.view[2] - context.pdfPageProxy.view[0]}px`,
-                height: `${context.pdfPageProxy.view[3] - context.pdfPageProxy.view[1]}px`,
-              } as React.CSSProperties
-            }
-            {...props}
-          >
-            {children}
-          </div>
-        )}
+        <div
+          style={
+            {
+              ...style,
+              "--scale-factor": 1,
+              position: "relative",
+              width: `${context.pdfPageProxy.view[2] - context.pdfPageProxy.view[0]}px`,
+              height: `${context.pdfPageProxy.view[3] - context.pdfPageProxy.view[1]}px`,
+            } as React.CSSProperties
+          }
+          {...props}
+        >
+          {children}
+        </div>
       </Primitive.div>
     </PDFPageContext.Provider>
   );

@@ -267,7 +267,7 @@ export const WithThumbnails: Story = {
     return (
       <Root
         fileURL={fileURL}
-        className="bg-gray-100 border rounded-md overflow-hidden relative h-[500px] flex flex-col justify-stretch"
+        className="bg-gray-100 border rounded-md overflow-hidden relative h-[700px] flex flex-col justify-stretch"
         loader={<div className="p-4">Loading...</div>}
       >
         <div className="bg-gray-100 border-b p-1 flex items-center justify-center text-sm text-gray-600 gap-2">
@@ -314,7 +314,7 @@ export const WithThumbnails: Story = {
     );
   },
   args: {
-    fileURL: "brochure.pdf",
+    fileURL: "large.pdf",
   },
 };
 

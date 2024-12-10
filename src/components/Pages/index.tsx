@@ -4,7 +4,6 @@ import {
   ReactElement,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -19,11 +18,12 @@ import {
 } from "@tanstack/react-virtual";
 import useVirtualizerVelocity from "./useVirtualizerVelocity";
 import { useViewport } from "@/lib/viewport";
-import { HighlightArea } from "../Highlight";
-import { getOffsetForHighlight } from "./utils";
+import { PagesAPI, usePagesAPI } from "./usePagesAPI";
+import { useVisiblePage } from "./useVisiblePage";
 
 export const VIRTUAL_ITEM_GAP = 10;
-export const BASE_PAGE_HEIGHT = 595; // Default A4 height
+export const DEFAULT_HEIGHT = 600;
+export const EXTRA_HEIGHT = 0;
 
 export const easeOutQuint = (t: number) => {
   return 1 - Math.pow(1 - t, 5);
@@ -38,36 +38,33 @@ const addEventListenerOptions = {
   passive: true,
 };
 
-interface HighlightAPI {
-  jumpToPage: (pageIndex: number, options?: any) => void;
-  jumpToOffset: (offset: number) => void;
-  jumpToHighlightArea: (area: HighlightArea) => void;
-}
-
-interface PagesProps {
+export interface PagesProps {
   children: ReactElement;
   virtualizerOptions?: {
     overscan?: number;
   };
-  onHighlightAPI?: (api: HighlightAPI) => void;
+  setReaderAPI?: (api: PagesAPI) => void;
 }
 export const Pages = ({
   children,
   virtualizerOptions = { overscan: 10 },
+  setReaderAPI,
 }: PagesProps) => {
-  const { pdfDocumentProxy, pageHeight } = usePDFDocument();
+  const { pdfDocumentProxy } = usePDFDocument();
 
   const scrollingRef = useRef<number | null>(null);
   const numPages = pdfDocumentProxy.numPages;
 
-  const { viewportRef, zoomRef, isPinching } = useViewport();
+  const { viewportRef, zoomRef, isPinching, viewports, setCurrentPage } =
+    useViewport();
 
   const scrollToFn: VirtualizerOptions<any, any>["scrollToFn"] = useCallback(
-    (offset, canSmooth, instance) => {
+    (_offset, canSmooth, instance) => {
       const duration = 400;
       const start = viewportRef?.current?.scrollTop || 0;
       const startTime = (scrollingRef.current = Date.now());
 
+      let offset = _offset * (zoomRef.current ?? 1);
       // if we are in auto scroll mode, then immediately scroll
       // to the offset and not display any animation. For example if scroll
       // immediately to a rescaled offset if zoom/scale has just been changed
@@ -97,7 +94,13 @@ export const Pages = ({
     [viewportRef],
   );
 
-  const estimateSize = (index: number) => pageHeight;
+  const estimateSize = useCallback(
+    (index: number) => {
+      if (!viewports || !viewports[index]) return DEFAULT_HEIGHT;
+      return viewports[index].height + EXTRA_HEIGHT;
+    },
+    [viewports],
+  );
 
   const observeElementOffset = <T extends Element>(
     instance: Virtualizer<T, any>,
@@ -131,7 +134,6 @@ export const Pages = ({
         : element["scrollTop"];
 
       offset = offset / (zoomRef.current ?? 1);
-
       fallback();
 
       cb(offset, isScrolling);
@@ -161,12 +163,10 @@ export const Pages = ({
 
   const [tempItems, setTempItems] = useState<VirtualItem[]>([]);
 
-  const items = tempItems.length ? tempItems : virtualizer.getVirtualItems();
-
   useEffect(() => {
     let timeout: NodeJS.Timeout;
-
     const virtualized = virtualizer.getVirtualItems();
+
     if (!isPinching) {
       virtualizer.measure();
 
@@ -182,60 +182,17 @@ export const Pages = ({
     };
   }, [isPinching]);
 
-  const jumpToPage = (
-    pageIndex: number,
-    options?: {
-      align?: "start" | "center" | "end" | "auto";
-      behavior?: "auto" | "smooth";
-    },
-  ) => {
-    // Define default options
-    const defaultOptions = {
-      align: "start",
-      behavior: "smooth",
-    };
-
-    // Merge default options with any provided options
-    const finalOptions = { ...defaultOptions, ...options };
-    // @ts-ignore
-    virtualizer.scrollToIndex(pageIndex, finalOptions);
-  };
-
-  const jumpToOffset = (offset: number) => {
-    virtualizer.scrollToOffset(offset, {
-      align: "start",
-      behavior: "smooth",
-    });
-  };
-
-  const jumpToHighlightArea = (area: HighlightArea) => {
-    const startOffset = virtualizer.getOffsetForIndex?.(
-      area.pageNumber,
-      "start",
-    )?.[0];
-
-    if (startOffset == null) return;
-
-    const itemHeight = estimateSize(area.pageNumber);
-
-    const largestRect = area.rects.reduce((a, b) => {
-      return a.height > b.height ? a : b;
-    });
-    const offset = getOffsetForHighlight({
-      ...largestRect,
-      itemHeight: itemHeight - 10, // accounts for padding top and bottom
-      startOffset: startOffset - 5, // accounts for padding on top
-    });
-
-    virtualizer.scrollToOffset(offset, {
-      align: "start",
-      behavior: "smooth",
-    });
-  };
+  usePagesAPI({ virtualizer, estimateSize, setReaderAPI });
 
   const { normalizedVelocity } = useVirtualizerVelocity({
     virtualizer,
     estimateSize,
+  });
+
+  const items = tempItems.length ? tempItems : virtualizer.getVirtualItems();
+
+  const { currentPageIndex } = useVisiblePage({
+    items: virtualizer.getVirtualItems(),
   });
 
   const isScrollingFast = Math.abs(normalizedVelocity) > 1;
@@ -249,24 +206,32 @@ export const Pages = ({
         position: "relative",
       }}
     >
-      {items.map((virtualItem) => (
-        <div
-          key={virtualItem.key}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: "50%",
-            width: "fit",
-            height: `${virtualItem.size}px`,
-            transform: `translateX(-50%) translateY(${virtualItem.start}px)`,
-          }}
-        >
-          {cloneElement(children, {
-            key: virtualItem.key,
-            pageNumber: virtualItem.index + 1,
-          })}
-        </div>
-      ))}
+      {items.map((virtualItem) => {
+        const innerBoxWidth =
+          viewports && viewports[virtualItem.index]
+            ? viewports[virtualItem.index].width
+            : 0;
+
+        return (
+          <div
+            key={virtualItem.key}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: "50%",
+              width: innerBoxWidth,
+              height: `${virtualItem.size}px`,
+              transform: `translateX(-50%) translateY(${virtualItem.start}px)`,
+              background: "white",
+            }}
+          >
+            {cloneElement(children, {
+              key: virtualItem.key,
+              pageNumber: virtualItem.index + 1,
+            })}
+          </div>
+        );
+      })}
     </div>
   );
 };

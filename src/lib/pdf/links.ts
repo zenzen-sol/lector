@@ -3,9 +3,9 @@ import { RefProxy } from "pdfjs-dist/types/src/display/api";
 import { IPDFLinkService } from "pdfjs-dist/types/web/interfaces";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 
-import { ViewportContextType } from "../viewport";
 import { usePDFDocument } from "./document";
 import { cancellable } from "./utils";
+import { ViewportContextType } from "../viewport/useViewport";
 
 // @ts-expect-error TODO: not all methods are implemented
 export class LinkService implements IPDFLinkService {
@@ -66,7 +66,7 @@ export class LinkService implements IPDFLinkService {
 
     const page = await this.pdfDocumentProxy.getPageIndex(explicitRef);
 
-    this.viewportContext.goToPage(page + 1);
+    // this.viewportContext.goToPage(page + 1);
   }
 }
 

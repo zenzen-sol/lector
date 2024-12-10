@@ -1,5 +1,5 @@
 import { useDebounce } from "@uidotdev/usehooks";
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 
 import { useDPR, useViewport, useVisibility } from "@/lib/viewport";
 
@@ -14,7 +14,7 @@ export const useCanvasLayer = () => {
   const zoom = useDebounce(bouncyZoom, 100);
   const debouncedVisible = useDebounce(visible, 100);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!canvasRef.current) {
       return;
     }

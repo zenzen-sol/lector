@@ -39,7 +39,7 @@ export const OutlineItem: FunctionComponent<OutlineItemProps> = ({
   }
 
   const { getDestinationPage } = usePDFDocument();
-  const { goToPage } = useViewport();
+  const { pagesAPI } = useViewport();
 
   const navigate = useCallback(() => {
     if (!item.dest) {
@@ -51,9 +51,9 @@ export const OutlineItem: FunctionComponent<OutlineItemProps> = ({
         return;
       }
 
-      goToPage(page + 1);
+      pagesAPI?.jumpToPage(page, { behavior: "smooth" });
     });
-  }, [item.dest, getDestinationPage, goToPage]);
+  }, [item.dest, getDestinationPage]);
 
   return (
     <Primitive.li {...props}>

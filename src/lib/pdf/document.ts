@@ -32,15 +32,17 @@ export interface usePDFDocumentParams {
    */
   fileURL: string;
   highlights?: HighlightArea[];
+  onDocumentLoad?: (url: string) => void;
 }
 
 export const usePDFDocumentContext = ({
+  onDocumentLoad,
   fileURL,
   highlights = [],
 }: usePDFDocumentParams) => {
   const [ready, setReady] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [pageHeight, setPageHeight] = useState(0);
+
   const pdfDocumentProxy = useRef<PDFDocumentProxy | null>(null);
 
   useEffect(() => {
@@ -60,19 +62,11 @@ export const usePDFDocumentContext = ({
 
     loadingTask.promise.then(
       (proxy) => {
-        const getInitialConfig = async () => {
-          const page = await proxy.getPage(1);
-          const viewport = page.getViewport({ scale: 1 });
-          const { height } = viewport;
+        pdfDocumentProxy.current = proxy;
 
-          pdfDocumentProxy.current = proxy;
-          setProgress(1);
-          setReady(true);
-
-          setPageHeight(height);
-        };
-
-        getInitialConfig();
+        onDocumentLoad?.(fileURL);
+        setProgress(1);
+        setReady(true);
       },
       (error) => {
         // eslint-disable-next-line no-console
@@ -95,7 +89,6 @@ export const usePDFDocumentContext = ({
 
   return {
     context: {
-      pageHeight,
       highlights,
       get pdfDocumentProxy() {
         return getDocumentProxy();
@@ -136,7 +129,6 @@ export interface PDFDocumentContextType {
   ) => Promise<number | undefined>;
   ready: boolean;
   highlights: HighlightArea[];
-  pageHeight: number;
 }
 
 export const defaultPDFDocumentContext: PDFDocumentContextType = {
@@ -148,7 +140,6 @@ export const defaultPDFDocumentContext: PDFDocumentContextType = {
   },
   ready: false,
   highlights: [],
-  pageHeight: 0,
 } satisfies PDFDocumentContextType;
 
 export const PDFDocumentContext = createContext(defaultPDFDocumentContext);

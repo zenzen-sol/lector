@@ -18,6 +18,7 @@ export const Root = forwardRef(
       fileURL,
       loader,
       highlights,
+      onDocumentLoad,
       ...props
     }: HTMLProps<HTMLDivElement> &
       usePDFDocumentParams & {
@@ -28,8 +29,9 @@ export const Root = forwardRef(
     const { ready, context, pdfDocumentProxy } = usePDFDocumentContext({
       fileURL,
       highlights,
+      onDocumentLoad,
     });
-    const viewportContext = useViewportContext({});
+    const viewportContext = useViewportContext({ pdfDocumentProxy });
     const linkService = useCreatePDFLinkService(
       pdfDocumentProxy,
       viewportContext,

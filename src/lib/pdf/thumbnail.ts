@@ -29,6 +29,7 @@ export const useThumbnail = (
   useEffect(() => {
     const { cancel } = cancellable(
       (async () => {
+        //TODO: opitimize this for thumbnails add virtualization too
         if (!canvasRef.current || !pdfDocumentProxy) {
           return;
         }

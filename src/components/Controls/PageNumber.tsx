@@ -4,7 +4,7 @@ import { HTMLProps, useEffect, useRef, useState } from "react";
 export const NextPage = () => {};
 export const PreviousPage = () => {};
 export const CurrentPage = ({ ...props }: HTMLProps<HTMLInputElement>) => {
-  const { currentPage, pages, goToPage } = useViewport();
+  const { currentPage, pages, pagesAPI } = useViewport();
   const [pageNumber, setPageNumber] = useState<string | number>(currentPage);
   const isSelected = useRef<boolean>(false);
 
@@ -32,8 +32,8 @@ export const CurrentPage = ({ ...props }: HTMLProps<HTMLInputElement>) => {
       onClick={() => (isSelected.current = true)}
       onBlur={(e) => {
         if (currentPage !== Number(e.target.value)) {
-          goToPage(Number(e.target.value), {
-            smooth: false,
+          pagesAPI?.jumpToPage(Number(e.target.value), {
+            behavior: "auto",
           });
         }
 

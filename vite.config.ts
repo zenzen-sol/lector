@@ -15,7 +15,7 @@ export default defineConfig({
     emptyOutDir: true,
     sourcemap: true,
     rollupOptions: {
-      external: ["react"],
+      external: ["react", "react/jsx-runtime"],
     },
   },
   plugins: [react()],

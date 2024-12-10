@@ -1,11 +1,12 @@
 import "pdfjs-dist/web/pdf_viewer.css";
 import { Viewport } from "./Viewport";
-import { useViewport } from "@/lib/viewport";
+import { useViewport, useZoomOperations } from "@/lib/viewport";
 import { Root } from "./Root";
 import { Page } from "./Page";
 import { AnnotationLayer, CanvasLayer, TextLayer, CustomLayer } from "./Layers";
 import { Outline, OutlineChildItems, OutlineItem } from "./Outline";
 import { Pages } from "./Pages";
+import { type PagesAPI } from "./Pages/usePagesAPI";
 import { CurrentPage, TotalPages } from "./Controls/PageNumber";
 import { CurrentZoom, ZoomIn, ZoomOut } from "./Controls/Zoom";
 import { Thumbnail, Thumbnails } from "./Thumbnails";
@@ -65,6 +66,8 @@ export const Example = ({ fileURL }: { fileURL: string }) => {
 
 export {
   Viewport,
+  useViewport,
+  useZoomOperations,
   Root,
   Page,
   AnnotationLayer,
@@ -75,6 +78,7 @@ export {
   OutlineChildItems,
   OutlineItem,
   Pages,
+  PagesAPI,
   CurrentPage,
   TotalPages,
   CurrentZoom,
