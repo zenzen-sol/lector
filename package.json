@@ -68,5 +68,8 @@
   "dependencies": {
     "@floating-ui/react": "^0.26.28",
     "@tanstack/react-virtual": "^3.10.9"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.28.1"
   }
 }
