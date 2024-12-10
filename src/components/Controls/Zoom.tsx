@@ -1,9 +1,9 @@
 import { HTMLProps, useEffect, useRef, useState } from "react";
 import { Primitive } from "../Primitive";
-import { useViewport } from "@/lib/viewport";
+import { usePDF } from "@/lib/internal";
 
 export const ZoomIn = ({ ...props }: HTMLProps<HTMLButtonElement>) => {
-  const { setZoom } = useViewport();
+  const setZoom = usePDF((state) => state.updateZoom);
 
   return (
     <Primitive.button
@@ -17,7 +17,7 @@ export const ZoomIn = ({ ...props }: HTMLProps<HTMLButtonElement>) => {
 };
 
 export const ZoomOut = ({ ...props }: HTMLProps<HTMLButtonElement>) => {
-  const { setZoom } = useViewport();
+  const setZoom = usePDF((state) => state.updateZoom);
 
   return (
     <Primitive.button
@@ -31,7 +31,9 @@ export const ZoomOut = ({ ...props }: HTMLProps<HTMLButtonElement>) => {
 };
 
 export const CurrentZoom = ({ ...props }: HTMLProps<HTMLInputElement>) => {
-  const { zoom: realZoom, setZoom: setRealZoom } = useViewport();
+  const setRealZoom = usePDF((state) => state.updateZoom);
+  const realZoom = usePDF((state) => state.zoom);
+
   const [zoom, setZoom] = useState<string>((realZoom * 100).toFixed(0));
   const isSelected = useRef<boolean>(false);
 

@@ -1,5 +1,4 @@
-import { usePDFDocument } from "@/lib/pdf/document";
-import { usePDFPage } from "@/lib/pdf/page";
+import { usePDFPageNumber } from "@/lib/pdf/page";
 import { ReactNode } from "react";
 
 export type HighlightRect = {
@@ -22,8 +21,8 @@ export const HighlightLayer = ({
   children?: ReactNode;
   className?: string;
 }) => {
-  const { highlights } = usePDFDocument();
-  const { pageNumber } = usePDFPage();
+  const { highlights } = { highlights: [] } as { highlights: HighlightArea[] };
+  const pageNumber = usePDFPageNumber();
 
   const area = highlights.find((area) => area.pageNumber === pageNumber);
 

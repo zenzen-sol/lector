@@ -1,12 +1,17 @@
-import { useViewport } from "@/lib/viewport";
+import { usePDF } from "@/lib/internal";
+import { usePDFJump } from "@/lib/pages";
 import { HTMLProps, useEffect, useRef, useState } from "react";
 
 export const NextPage = () => {};
 export const PreviousPage = () => {};
 export const CurrentPage = ({ ...props }: HTMLProps<HTMLInputElement>) => {
-  const { currentPage, pages, pagesAPI } = useViewport();
+  const currentPage = usePDF((state) => state.currentPage);
+  const pages = usePDF((state) => state.pdfDocumentProxy.numPages);
+
   const [pageNumber, setPageNumber] = useState<string | number>(currentPage);
   const isSelected = useRef<boolean>(false);
+
+  const { jumpToHighlightArea, jumpToOffset, jumpToPage } = usePDFJump();
 
   useEffect(() => {
     if (isSelected.current) {
@@ -32,7 +37,7 @@ export const CurrentPage = ({ ...props }: HTMLProps<HTMLInputElement>) => {
       onClick={() => (isSelected.current = true)}
       onBlur={(e) => {
         if (currentPage !== Number(e.target.value)) {
-          pagesAPI?.jumpToPage(Number(e.target.value), {
+          jumpToPage(Number(e.target.value), {
             behavior: "auto",
           });
         }
@@ -43,13 +48,13 @@ export const CurrentPage = ({ ...props }: HTMLProps<HTMLInputElement>) => {
         e.key === "Enter" && e.currentTarget.blur();
       }}
       min={1}
-      max={pages.size}
+      max={pages}
     />
   );
 };
 
 export const TotalPages = ({ ...props }: HTMLProps<HTMLDivElement>) => {
-  const { pages } = useViewport();
+  const pages = usePDF((state) => state.pdfDocumentProxy.numPages);
 
-  return <div {...props}>{pages.size}</div>;
+  return <div {...props}>{pages}</div>;
 };

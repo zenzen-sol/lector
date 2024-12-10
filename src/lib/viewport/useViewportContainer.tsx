@@ -1,7 +1,7 @@
 import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { useGesture } from "@use-gesture/react";
 import { clamp, firstMemo } from "./utils";
-import { useViewport } from "./useViewport";
+import { usePDF } from "../internal";
 
 export const useViewportContainer = ({
   containerRef,
@@ -14,11 +14,15 @@ export const useViewportContainer = ({
 }) => {
   const [origin, setOrigin] = useState<[number, number]>([0, 0]);
 
-  const { minZoom, maxZoom, setZoom, setViewportRef, zoom, setIsPinching } =
-    useViewport();
+  const { maxZoom, minZoom } = usePDF((state) => state.zoomOptions);
+  const zoom = usePDF((state) => state.zoom);
+  const viewportRef = usePDF((state) => state.viewportRef);
+
+  const setIsPinching = usePDF((state) => state.setIsPinching);
+  const updateZoom = usePDF((state) => state.updateZoom);
 
   useEffect(() => {
-    setViewportRef(containerRef);
+    viewportRef.current = containerRef.current;
   }, [containerRef.current]);
 
   const transformations = useRef<{
@@ -52,8 +56,8 @@ export const useViewportContainer = ({
     containerRef.current.scrollTop = translateY;
     containerRef.current.scrollLeft = translateX;
 
-    setZoom(() => transformations.current.zoom);
-  }, [containerRef.current, elementRef.current, setZoom, zoom]);
+    updateZoom(() => transformations.current.zoom);
+  }, [containerRef.current, elementRef.current, updateZoom, zoom]);
 
   useEffect(() => {
     if (transformations.current.zoom === zoom || !containerRef.current) {

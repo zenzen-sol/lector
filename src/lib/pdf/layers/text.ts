@@ -1,11 +1,13 @@
+import { usePDF } from "@/lib/internal";
 import { TextLayer } from "pdfjs-dist";
 import { useEffect, useRef } from "react";
-
-import { usePDFPage } from "../page";
+import { usePDFPageNumber } from "../page";
 
 export const useTextLayer = () => {
   const textContainerRef = useRef<HTMLDivElement>(null);
-  const { pdfPageProxy } = usePDFPage();
+
+  const pageNumber = usePDFPageNumber();
+  const pdfPageProxy = usePDF((state) => state.getPdfPageProxy(pageNumber));
 
   useEffect(() => {
     if (!textContainerRef.current) {

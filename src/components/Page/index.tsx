@@ -1,7 +1,7 @@
-import { usePDFPageContext, PDFPageContext } from "@/lib/pdf/page";
-import { usePageViewport } from "@/lib/viewport";
 import { HTMLProps, ReactNode, useRef } from "react";
 import { Primitive } from "../Primitive";
+import { usePDF } from "@/lib/internal";
+import { PDFPageNumberContext } from "@/lib/pdf/page";
 
 export const Page = ({
   children,
@@ -12,15 +12,11 @@ export const Page = ({
   children: ReactNode;
   pageNumber?: number;
 }) => {
-  const pageContainerRef = useRef<HTMLDivElement>(null);
-  const { context } = usePDFPageContext(pageNumber);
-
-  usePageViewport({ pageContainerRef, pageNumber });
+  const pdfPageProxy = usePDF((state) => state.getPdfPageProxy(pageNumber));
 
   return (
-    <PDFPageContext.Provider value={context}>
+    <PDFPageNumberContext.Provider value={pdfPageProxy.pageNumber}>
       <Primitive.div
-        ref={pageContainerRef}
         style={{
           display: "block",
         }}
@@ -31,8 +27,8 @@ export const Page = ({
               ...style,
               "--scale-factor": 1,
               position: "relative",
-              width: `${context.pdfPageProxy.view[2] - context.pdfPageProxy.view[0]}px`,
-              height: `${context.pdfPageProxy.view[3] - context.pdfPageProxy.view[1]}px`,
+              width: `${pdfPageProxy.view[2] - pdfPageProxy.view[0]}px`,
+              height: `${pdfPageProxy.view[3] - pdfPageProxy.view[1]}px`,
             } as React.CSSProperties
           }
           {...props}
@@ -40,6 +36,6 @@ export const Page = ({
           {children}
         </div>
       </Primitive.div>
-    </PDFPageContext.Provider>
+    </PDFPageNumberContext.Provider>
   );
 };

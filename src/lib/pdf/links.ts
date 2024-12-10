@@ -3,14 +3,12 @@ import { RefProxy } from "pdfjs-dist/types/src/display/api";
 import { IPDFLinkService } from "pdfjs-dist/types/web/interfaces";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 
-import { usePDFDocument } from "./document";
 import { cancellable } from "./utils";
-import { ViewportContextType } from "../viewport/useViewport";
+import { usePDF } from "../internal";
 
 // @ts-expect-error TODO: not all methods are implemented
 export class LinkService implements IPDFLinkService {
   _pdfDocumentProxy?: PDFDocumentProxy;
-  viewportContext: ViewportContextType;
   externalLinkEnabled = true;
   isInPresentationMode = false;
 
@@ -22,8 +20,8 @@ export class LinkService implements IPDFLinkService {
     return this._pdfDocumentProxy;
   }
 
-  constructor(viewportContext: ViewportContextType) {
-    this.viewportContext = viewportContext;
+  constructor() {
+    // this.viewportContext = viewportContext;
   }
 
   get pagesCount() {
@@ -66,15 +64,15 @@ export class LinkService implements IPDFLinkService {
 
     const page = await this.pdfDocumentProxy.getPageIndex(explicitRef);
 
+    //TODO fix this
     // this.viewportContext.goToPage(page + 1);
   }
 }
 
 export const useCreatePDFLinkService = (
   pdfDocumentProxy: PDFDocumentProxy | null,
-  viewportContext: ViewportContextType,
 ) => {
-  const linkService = useRef<LinkService>(new LinkService(viewportContext));
+  const linkService = useRef<LinkService>(new LinkService());
 
   useEffect(() => {
     if (pdfDocumentProxy) {
@@ -92,7 +90,7 @@ export const usePDFLinkService = () => {
 };
 
 export const usePDFOutline = () => {
-  const { pdfDocumentProxy } = usePDFDocument();
+  const pdfDocumentProxy = usePDF((state) => state.pdfDocumentProxy);
   const [outline, setOutline] =
     useState<Awaited<ReturnType<PDFDocumentProxy["getOutline"]>>>();
 

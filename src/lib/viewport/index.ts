@@ -1,10 +1,2 @@
-export { useZoomOperations } from "./useZoomOperation";
 export { useViewportContainer } from "./useViewportContainer";
-export {
-  useViewport,
-  usePageViewport,
-  useDPR,
-  ViewportContext,
-  useViewportContext,
-  useVisibility,
-} from "./useViewport";
+export { useDPR, useVisibility } from "./useViewport";

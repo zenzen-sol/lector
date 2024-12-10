@@ -4,8 +4,9 @@ import { useEffect, useRef } from "react";
 import { useVisibility } from "@/lib/viewport";
 
 import { usePDFLinkService } from "../links";
-import { usePDFPage } from "../page";
 import { cancellable } from "../utils";
+import { usePDFPageNumber } from "../page";
+import { usePDF } from "@/lib/internal";
 
 export interface AnnotationLayerParams {
   /**
@@ -26,7 +27,8 @@ export const useAnnotationLayer = (params: AnnotationLayerParams) => {
     elementRef: annotationLayerRef,
   });
 
-  const { pdfPageProxy } = usePDFPage();
+  const pageNumber = usePDFPageNumber();
+  const pdfPageProxy = usePDF((state) => state.getPdfPageProxy(pageNumber));
 
   useEffect(() => {
     if (!annotationLayerRef.current) {
