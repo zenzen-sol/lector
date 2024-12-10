@@ -24,6 +24,7 @@ export const Viewport = ({ children, ...props }: HTMLProps<HTMLDivElement>) => {
         ...props.style,
         position: "relative",
         overflow: "auto",
+        scrollbarGutter: "stable",
         width: "100%",
       }}
     >

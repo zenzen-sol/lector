@@ -1,5 +1,5 @@
 {
-  "name": "@unriddle/pdf-viewer",
+  "name": "@unriddle-ai/pdf-viewer",
   "version": "0.1.44",
   "description": "Easiest way to display and interact with PDFs from your web app.",
   "main": "dist/pdf-viewer.cjs",

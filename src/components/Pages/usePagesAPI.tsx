@@ -69,12 +69,14 @@ export const usePagesAPI = ({
       const largestRect = area.rects.reduce((a, b) => {
         return a.height > b.height ? a : b;
       });
+
+      console.log(largestRect);
       const offset = getOffsetForHighlight({
         ...largestRect,
         itemHeight: itemHeight - 10, // accounts for padding top and bottom
         startOffset: startOffset - 5, // accounts for padding on top
       });
-
+      console.log(offset);
       virtualizer.scrollToOffset(offset, {
         align: "start",
         behavior: "smooth",
