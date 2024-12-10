@@ -50,7 +50,7 @@ export const useViewportContainer = ({
 
     const elementBoundingBox = elementRef.current.getBoundingClientRect();
 
-    elementWrapperRef.current.style.width = `${elementBoundingBox.width}px`;
+    // elementWrapperRef.current.style.width = `${elementBoundingBox.width}px`;
     elementWrapperRef.current.style.height = `${elementBoundingBox.height}px`;
 
     containerRef.current.scrollTop = translateY;
@@ -87,7 +87,7 @@ export const useViewportContainer = ({
 
       const elementBoundingBox = entries[0];
 
-      elementWrapperRef.current.style.width = `${elementBoundingBox.contentRect.width}px`;
+      // elementWrapperRef.current.style.width = `${elementBoundingBox.contentRect.width}px`;
       elementWrapperRef.current.style.height = `${elementBoundingBox.contentRect.height}px`;
     };
 

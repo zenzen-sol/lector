@@ -99,12 +99,13 @@ export const OutlineItem: FunctionComponent<OutlineItemProps> = ({
         item.items.length > 0 &&
         cloneElement(children, {
           // @ts-expect-error
-          children: item.items.map((item) =>
+          children: item.items.map((item, index) =>
             cloneElement(outlineItem, {
               // @ts-expect-error
               level: level + 1,
               item,
               outlineItem,
+              key: index,
             }),
           ),
         })}
@@ -123,8 +124,9 @@ export const Outline = ({
   return (
     <Primitive.ul {...props}>
       {outline &&
-        outline.map((item: OutlineItemType) => {
+        outline.map((item: OutlineItemType, idx) => {
           return cloneElement(children, {
+            key: idx,
             item,
             outlineItem: children,
           } as OutlineItemProps);

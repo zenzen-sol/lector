@@ -9,6 +9,7 @@ import {
 // @ts-expect-error Vite Worker
 import PDFWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url&inline";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { InitialPDFState } from "../internal";
 
 /**
  * General setup for pdf.js
@@ -28,13 +29,6 @@ export interface usePDFDocumentParams {
   initialRotation?: number;
 }
 
-type InitialState = {
-  viewports: PageViewport[];
-  pageProxies: PDFPageProxy[];
-  defaultRotations: number[];
-  pdfDocumentProxy: PDFDocumentProxy;
-};
-
 export const usePDFDocumentContext = ({
   onDocumentLoad,
   fileURL,
@@ -42,7 +36,7 @@ export const usePDFDocumentContext = ({
 }: usePDFDocumentParams) => {
   const [progress, setProgress] = useState(0);
 
-  const [initialState, setInitialState] = useState<InitialState | null>();
+  const [initialState, setInitialState] = useState<InitialPDFState | null>();
   const [rotation, setRotation] = useState<number>(initialRotation);
 
   useEffect(() => {
@@ -99,7 +93,7 @@ export const usePDFDocumentContext = ({
 
     setInitialState({
       viewports,
-      defaultRotations: rotations,
+      // defaultRotations: rotations,
       pageProxies,
       pdfDocumentProxy: pdf,
     });

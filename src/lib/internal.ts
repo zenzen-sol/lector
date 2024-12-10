@@ -35,13 +35,15 @@ interface PDFState {
 
 export type PDFVirtualizer = Virtualizer<any, any>;
 
+export type InitialPDFState = Pick<
+  PDFState,
+  "pdfDocumentProxy" | "pageProxies" | "viewports"
+>;
+
 export const PDFStore = createZustandContext(
-  ({
-    pageProxies,
-    pdfDocumentProxy,
-  }: Pick<PDFState, "pdfDocumentProxy" | "pageProxies">) => {
+  (initialState: InitialPDFState) => {
     return createStore<PDFState>((set, get) => ({
-      pdfDocumentProxy,
+      pdfDocumentProxy: initialState.pdfDocumentProxy,
 
       zoom: 1,
       zoomOptions: {
@@ -50,7 +52,7 @@ export const PDFStore = createZustandContext(
       },
 
       viewportRef: createRef<HTMLDivElement>(),
-      viewports: [],
+      viewports: initialState.viewports,
 
       updateZoom: (zoom) => {
         const { minZoom, maxZoom } = get().zoomOptions;
@@ -85,7 +87,7 @@ export const PDFStore = createZustandContext(
         });
       },
 
-      pageProxies,
+      pageProxies: initialState.pageProxies,
       getPdfPageProxy: (pageNumber) => {
         const proxy = get().pageProxies[pageNumber - 1];
         return proxy;
