@@ -1,4 +1,4 @@
-import { useViewport, useViewportContainer } from "@/lib/viewport";
+import { useViewportContainer } from "@/lib/viewport";
 import { HTMLProps, useRef } from "react";
 import { Primitive } from "../Primitive";
 
@@ -12,7 +12,6 @@ export const Viewport = ({ children, ...props }: HTMLProps<HTMLDivElement>) => {
     elementWrapperRef: elementWrapperRef,
     containerRef,
   });
-  const { isViewportsReady } = useViewport();
 
   return (
     <Primitive.div
@@ -46,7 +45,7 @@ export const Viewport = ({ children, ...props }: HTMLProps<HTMLDivElement>) => {
             margin: "0 auto",
           }}
         >
-          {isViewportsReady ? children : null}
+          {children}
         </div>
       </div>
     </Primitive.div>

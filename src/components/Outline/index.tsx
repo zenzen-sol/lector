@@ -1,6 +1,4 @@
-import { usePDFDocument } from "@/lib/pdf/document";
 import { usePDFOutline } from "@/lib/pdf/links";
-import { useViewport } from "@/lib/viewport";
 import {
   cloneElement,
   FunctionComponent,
@@ -9,6 +7,9 @@ import {
   useCallback,
 } from "react";
 import { Primitive } from "../Primitive";
+import { usePDF } from "@/lib/internal";
+import { usePDFJump } from "@/lib/pages";
+import { RefProxy } from "pdfjs-dist/types/src/display/api";
 
 type OutlineItemType = NonNullable<ReturnType<typeof usePDFOutline>>[number];
 
@@ -38,8 +39,32 @@ export const OutlineItem: FunctionComponent<OutlineItemProps> = ({
     throw new Error("Outline item is required");
   }
 
-  const { getDestinationPage } = usePDFDocument();
-  const { pagesAPI } = useViewport();
+  const pdfDocumentProxy = usePDF((state) => state.pdfDocumentProxy);
+  const { jumpToPage } = usePDFJump();
+
+  const getDestinationPage = async (
+    dest: string | unknown[] | Promise<unknown[]>,
+  ) => {
+    let explicitDest: unknown[] | null;
+
+    if (typeof dest === "string") {
+      explicitDest = await pdfDocumentProxy.getDestination(dest);
+    } else if (Array.isArray(dest)) {
+      explicitDest = dest;
+    } else {
+      explicitDest = await dest;
+    }
+
+    if (!explicitDest) {
+      return;
+    }
+
+    const explicitRef = explicitDest[0] as RefProxy;
+
+    const page = await pdfDocumentProxy.getPageIndex(explicitRef);
+
+    return page;
+  };
 
   const navigate = useCallback(() => {
     if (!item.dest) {
@@ -51,7 +76,7 @@ export const OutlineItem: FunctionComponent<OutlineItemProps> = ({
         return;
       }
 
-      pagesAPI?.jumpToPage(page, { behavior: "smooth" });
+      jumpToPage(page, { behavior: "smooth" });
     });
   }, [item.dest, getDestinationPage]);
 
@@ -74,12 +99,13 @@ export const OutlineItem: FunctionComponent<OutlineItemProps> = ({
         item.items.length > 0 &&
         cloneElement(children, {
           // @ts-expect-error
-          children: item.items.map((item) =>
+          children: item.items.map((item, index) =>
             cloneElement(outlineItem, {
               // @ts-expect-error
               level: level + 1,
               item,
               outlineItem,
+              key: index,
             }),
           ),
         })}
@@ -98,8 +124,9 @@ export const Outline = ({
   return (
     <Primitive.ul {...props}>
       {outline &&
-        outline.map((item: OutlineItemType) => {
+        outline.map((item: OutlineItemType, idx) => {
           return cloneElement(children, {
+            key: idx,
             item,
             outlineItem: children,
           } as OutlineItemProps);

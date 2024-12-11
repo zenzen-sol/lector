@@ -1,21 +1,15 @@
-import { HighlightArea } from "@/components";
 import {
   getDocument,
   GlobalWorkerOptions,
   OnProgressParameters,
+  PageViewport,
   PDFDocumentProxy,
+  PDFPageProxy,
 } from "pdfjs-dist";
 // @ts-expect-error Vite Worker
 import PDFWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url&inline";
-import { RefProxy } from "pdfjs-dist/types/src/display/api";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { InitialPDFState } from "../internal";
 
 /**
  * General setup for pdf.js
@@ -31,22 +25,22 @@ export interface usePDFDocumentParams {
    * The URL of the PDF file to load.
    */
   fileURL: string;
-  highlights?: HighlightArea[];
   onDocumentLoad?: (url: string) => void;
+  initialRotation?: number;
 }
 
 export const usePDFDocumentContext = ({
   onDocumentLoad,
   fileURL,
-  highlights = [],
+  initialRotation = 0,
 }: usePDFDocumentParams) => {
-  const [ready, setReady] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const pdfDocumentProxy = useRef<PDFDocumentProxy | null>(null);
+  const [initialState, setInitialState] = useState<InitialPDFState | null>();
+  const [rotation, setRotation] = useState<number>(initialRotation);
 
   useEffect(() => {
-    setReady(false);
+    setInitialState(null);
     setProgress(0);
 
     const loadingTask = getDocument(fileURL);
@@ -62,11 +56,10 @@ export const usePDFDocumentContext = ({
 
     loadingTask.promise.then(
       (proxy) => {
-        pdfDocumentProxy.current = proxy;
-
         onDocumentLoad?.(fileURL);
         setProgress(1);
-        setReady(true);
+
+        generateViewports(proxy);
       },
       (error) => {
         // eslint-disable-next-line no-console
@@ -79,71 +72,34 @@ export const usePDFDocumentContext = ({
     };
   }, [fileURL]);
 
-  const getDocumentProxy = useCallback(() => {
-    if (!pdfDocumentProxy.current) {
-      throw new Error("PDF document not loaded");
-    }
+  const generateViewports = async (pdf: PDFDocumentProxy) => {
+    let pageProxies: Array<PDFPageProxy> = [];
+    const rotations: number[] = [];
+    const viewports = await Promise.all(
+      Array.from({ length: pdf.numPages }, async (_, index) => {
+        const page = await pdf.getPage(index + 1);
+        // sometimes there is information about the default rotation of the document
+        // stored in page.rotate. we need to always add that additional rotaton offset
+        const deltaRotate = page.rotate || 0;
+        const viewport = page.getViewport({
+          scale: 1,
+          rotation: rotation + deltaRotate,
+        });
+        pageProxies.push(page);
+        rotations.push(page.rotate);
+        return viewport;
+      }),
+    );
 
-    return pdfDocumentProxy.current;
-  }, [pdfDocumentProxy.current]);
+    setInitialState({
+      viewports,
+      // defaultRotations: rotations,
+      pageProxies,
+      pdfDocumentProxy: pdf,
+    });
+  };
 
   return {
-    context: {
-      highlights,
-      get pdfDocumentProxy() {
-        return getDocumentProxy();
-      },
-      async getDestinationPage(dest: string | unknown[] | Promise<unknown[]>) {
-        let explicitDest: unknown[] | null;
-
-        if (typeof dest === "string") {
-          explicitDest = await getDocumentProxy().getDestination(dest);
-        } else if (Array.isArray(dest)) {
-          explicitDest = dest;
-        } else {
-          explicitDest = await dest;
-        }
-
-        if (!explicitDest) {
-          return;
-        }
-
-        const explicitRef = explicitDest[0] as RefProxy;
-
-        const page = await getDocumentProxy().getPageIndex(explicitRef);
-
-        return page;
-      },
-      ready,
-    } satisfies PDFDocumentContextType,
-    ready,
-    progress,
-    pdfDocumentProxy: pdfDocumentProxy.current,
+    initialState,
   };
-};
-
-export interface PDFDocumentContextType {
-  pdfDocumentProxy: PDFDocumentProxy;
-  getDestinationPage: (
-    dest: string | unknown[] | Promise<unknown[]>,
-  ) => Promise<number | undefined>;
-  ready: boolean;
-  highlights: HighlightArea[];
-}
-
-export const defaultPDFDocumentContext: PDFDocumentContextType = {
-  get pdfDocumentProxy(): PDFDocumentProxy {
-    throw new Error("PDF document not loaded");
-  },
-  getDestinationPage: async () => {
-    throw new Error("PDF document not loaded");
-  },
-  ready: false,
-  highlights: [],
-} satisfies PDFDocumentContextType;
-
-export const PDFDocumentContext = createContext(defaultPDFDocumentContext);
-
-export const usePDFDocument = () => {
-  return useContext(PDFDocumentContext);
 };

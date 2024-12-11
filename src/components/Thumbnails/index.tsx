@@ -1,21 +1,15 @@
-import { usePDFDocument } from "@/lib/pdf/document";
-import {
-  cloneElement,
-  HTMLProps,
-  ReactElement,
-  useEffect,
-  useState,
-} from "react";
+import { cloneElement, HTMLProps, ReactElement } from "react";
 import { Primitive } from "../Primitive";
 import { useThumbnail } from "@/lib/pdf/thumbnail";
-import { useViewport } from "@/lib/viewport";
+import { usePDF } from "@/lib/internal";
+import { usePDFJump } from "@/lib/pages";
 
 export const Thumbnail = ({
   pageNumber = 1,
   ...props
 }: HTMLProps<HTMLCanvasElement> & { pageNumber?: number }) => {
   const { canvasRef } = useThumbnail(pageNumber);
-  const { pagesAPI } = useViewport();
+  const { jumpToPage } = usePDFJump();
 
   return (
     <Primitive.canvas
@@ -27,7 +21,7 @@ export const Thumbnail = ({
           props.onClick(e);
         }
 
-        pagesAPI?.jumpToPage(pageNumber, { behavior: "auto" });
+        jumpToPage(pageNumber, { behavior: "auto" });
       }}
       onKeyDown={(e: any) => {
         if (props.onKeyDown) {
@@ -35,7 +29,7 @@ export const Thumbnail = ({
         }
 
         if (e.key === "Enter") {
-          pagesAPI?.jumpToPage(pageNumber, { behavior: "auto" });
+          jumpToPage(pageNumber, { behavior: "auto" });
         }
       }}
       ref={canvasRef}
@@ -49,16 +43,7 @@ export const Thumbnails = ({
 }: HTMLProps<HTMLDivElement> & {
   children: ReactElement<typeof Thumbnail>;
 }) => {
-  const { pdfDocumentProxy } = usePDFDocument();
-  const [pageCount, setPageCount] = useState<number>(0);
-
-  useEffect(() => {
-    if (!pdfDocumentProxy) {
-      return;
-    }
-
-    setPageCount(pdfDocumentProxy.numPages);
-  }, [pdfDocumentProxy]);
+  const pageCount = usePDF((state) => state.pdfDocumentProxy.numPages);
 
   return (
     <Primitive.div {...props}>

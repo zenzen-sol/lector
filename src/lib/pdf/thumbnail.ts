@@ -2,8 +2,8 @@ import { useDebounce } from "@uidotdev/usehooks";
 import { useEffect, useRef } from "react";
 
 import { useDPR, useVisibility } from "../viewport";
-import { usePDFDocument } from "./document";
 import { cancellable } from "./utils";
+import { usePDF } from "../internal";
 
 export const useThumbnail = (
   pageNumber: number,
@@ -12,7 +12,8 @@ export const useThumbnail = (
     maxHeight?: number;
   } = {},
 ) => {
-  const { pdfDocumentProxy } = usePDFDocument();
+  const pdfDocumentProxy = usePDF((state) => state.pdfDocumentProxy);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dpr = useDPR();
   const { visible } = useVisibility({ elementRef: canvasRef });
@@ -30,7 +31,7 @@ export const useThumbnail = (
     const { cancel } = cancellable(
       (async () => {
         //TODO: opitimize this for thumbnails add virtualization too
-        if (!canvasRef.current || !pdfDocumentProxy) {
+        if (!canvasRef.current) {
           return;
         }
 

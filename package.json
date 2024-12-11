@@ -67,7 +67,9 @@
   },
   "dependencies": {
     "@floating-ui/react": "^0.26.28",
-    "@tanstack/react-virtual": "^3.10.9"
+    "@radix-ui/react-slot": "^1.1.0",
+    "@tanstack/react-virtual": "^3.10.9",
+    "zustand": "^5.0.2"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.28.1"

@@ -1,16 +1,20 @@
 import { useDebounce } from "@uidotdev/usehooks";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 
-import { useDPR, useViewport, useVisibility } from "@/lib/viewport";
-
-import { usePDFPage } from "../page";
+import { useDPR, useVisibility } from "@/lib/viewport";
+import { usePDF } from "@/lib/internal";
+import { usePDFPageNumber } from "../page";
 
 export const useCanvasLayer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { pdfPageProxy } = usePDFPage();
-  const dpr = useDPR();
+  const pageNumber = usePDFPageNumber();
+
   const { visible } = useVisibility({ elementRef: canvasRef });
-  const { zoom: bouncyZoom } = useViewport();
+  const dpr = useDPR();
+
+  const bouncyZoom = usePDF((state) => state.zoom);
+  const pdfPageProxy = usePDF((state) => state.getPdfPageProxy(pageNumber));
+
   const zoom = useDebounce(bouncyZoom, 100);
   const debouncedVisible = useDebounce(visible, 100);
 
