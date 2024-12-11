@@ -1,28 +1,20 @@
+import { HighlightArea, usePDF } from "@/lib/internal";
 import { usePDFPageNumber } from "@/lib/pdf/page";
-import { ReactNode } from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { ComponentPropsWithoutRef, ElementRef, forwardRef } from "react";
 
-export type HighlightRect = {
-  pageNumber: number;
-  top: number;
-  left: number;
-  height: number;
-  width: number;
-};
+interface HighlightLayerProps extends ComponentPropsWithoutRef<"div"> {
+  asChild?: boolean;
+}
 
-export type HighlightArea = {
-  pageNumber: number;
-  rects: HighlightRect[];
-};
-
-export const HighlightLayer = ({
-  children,
-  className,
-}: {
-  children?: ReactNode;
-  className?: string;
-}) => {
-  const { highlights } = { highlights: [] } as { highlights: HighlightArea[] };
+export const HighlightLayer = forwardRef<
+  ElementRef<"div">,
+  HighlightLayerProps
+>(({ asChild, className, style, ...props }, ref) => {
   const pageNumber = usePDFPageNumber();
+  const highlights = usePDF((state) => state.highlights);
+
+  const Comp = asChild ? Slot : "div";
 
   const area = highlights.find((area) => area.pageNumber === pageNumber);
 
@@ -31,9 +23,10 @@ export const HighlightLayer = ({
   return (
     <>
       {area.rects.map((rect, index) => (
-        <div
+        <Comp
+          ref={ref}
+          key={`highlight-${pageNumber}-${index}`}
           className={className}
-          key={index}
           style={{
             position: "absolute",
             top: rect.top,
@@ -41,11 +34,15 @@ export const HighlightLayer = ({
             height: rect.height,
             width: rect.width,
             pointerEvents: "none",
+            ...style,
           }}
+          {...props}
         >
-          {children}
-        </div>
+          {props.children}
+        </Comp>
       ))}
     </>
   );
-};
+});
+
+HighlightLayer.displayName = "HighlightLayer";

@@ -23,6 +23,8 @@ import { CurrentZoom, ZoomIn, ZoomOut } from "@/components/Controls/Zoom";
 import { useState } from "react";
 import clsx from "clsx";
 import { useSelectionDimensions } from "@/hooks/useSelectionDimensions";
+import { SearchUI } from "./custom-search";
+import { Search } from "@/components/Search";
 
 const meta: Meta<typeof Root> = {
   title: "Viewer",
@@ -200,6 +202,34 @@ export const WithZoomControl: Story = {
   },
 };
 
+export const WithSearchControl: Story = {
+  render: ({ fileURL }: { fileURL: string }) => {
+    return (
+      <Root
+        fileURL={fileURL}
+        className="flex bg-gray-50"
+        loader={<div className="p-4">Loading...</div>}
+      >
+        <Search>
+          <SearchUI />
+        </Search>
+        <Viewport className="p-4 h-[700px]">
+          <Pages>
+            <Page>
+              <CanvasLayer />
+              <TextLayer />
+              <HighlightLayer className="bg-yellow-200/70" />
+            </Page>
+          </Pages>
+        </Viewport>
+      </Root>
+    );
+  },
+  args: {
+    fileURL: "large.pdf",
+  },
+};
+
 export const WithOutline: Story = {
   render: ({ fileURL }: { fileURL: string }) => {
     const [showOutline, setShowOutline] = useState(true);
@@ -352,13 +382,10 @@ export const WithCustomLayer: Story = {
 
 export const WithHighlightLayer: Story = {
   render: ({ fileURL }: { fileURL: string }) => {
-    const [highlights, setHighlights] = useState<HighlightArea[]>([]);
-
     const { getDimension } = useSelectionDimensions();
 
     return (
       <Root
-        highlights={highlights}
         fileURL={fileURL}
         className="bg-gray-100 border rounded-md overflow-hidden relative h-[700px]"
         loader={<div className="p-4">Loading...</div>}
@@ -377,7 +404,7 @@ export const WithHighlightLayer: Story = {
                 const dimensions = getDimension();
                 if (!dimensions) return;
 
-                setHighlights(dimensions.highlights);
+                // setHighlights(dimensions.highlights);
               }}
               className="bg-gray-50 px-2 py-1 text-sm rounded-md hover:bg-gray-100"
             >

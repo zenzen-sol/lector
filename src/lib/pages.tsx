@@ -1,9 +1,9 @@
 import { HighlightArea } from "@/components";
 import { usePDF } from "./internal";
-import { getOffsetForHighlight } from "@/components/Pages/utils";
 
 export const usePDFJump = () => {
   const virtualizer = usePDF((state) => state.virtualizer);
+  const setHighlight = usePDF((state) => state.setHighlight);
 
   const jumpToPage = (
     pageIndex: number,
@@ -37,26 +37,27 @@ export const usePDFJump = () => {
   const jumpToHighlightArea = (area: HighlightArea) => {
     if (!virtualizer) return;
 
-    const startOffset = virtualizer.getOffsetForIndex?.(
-      area.pageNumber,
-      "start",
-    )?.[0];
+    setHighlight([area]);
 
-    if (startOffset == null) return;
+    // Get the start offset of the page in the viewport
+    const pageOffset = virtualizer.getOffsetForIndex(area.pageNumber - 1);
+    if (pageOffset === null) return;
 
-    const estimateSize = virtualizer.options.estimateSize;
-    const itemHeight = estimateSize(area.pageNumber);
+    // Find the target highlight rect (usually the first one)
+    const targetRect = area.rects[0];
 
-    const largestRect = area.rects.reduce((a, b) => {
-      return a.height > b.height ? a : b;
-    });
+    // Calculate absolute scroll position:
+    // Page offset + highlight's position within the page
+    const isNumber = pageOffset?.[0] != null;
 
-    const offset = getOffsetForHighlight({
-      ...largestRect,
-      itemHeight: itemHeight - 10, // accounts for padding top and bottom
-      startOffset: startOffset - 5, // accounts for padding on top
-    });
-    virtualizer.scrollToOffset(offset, {
+    if (!isNumber) return;
+
+    const scrollOffset = (pageOffset[0] ?? 0) + targetRect.top;
+
+    // Adjust for padding
+    const adjustedOffset = Math.max(0, scrollOffset);
+
+    virtualizer.scrollToOffset(adjustedOffset, {
       align: "start",
       behavior: "smooth",
     });

@@ -2,9 +2,26 @@ import { createStore, useStore } from "zustand";
 import { createZustandContext } from "./zustand";
 import { PageViewport, PDFDocumentProxy, PDFPageProxy } from "pdfjs-dist";
 import { clamp } from "./viewport/utils";
-import { createRef, Ref } from "react";
+import { createRef } from "react";
 import { Virtualizer } from "@tanstack/react-virtual";
 
+type TextContent = {
+  pageNumber: number;
+  text: string;
+};
+
+export type HighlightRect = {
+  pageNumber: number;
+  top: number;
+  left: number;
+  height: number;
+  width: number;
+};
+
+export type HighlightArea = {
+  pageNumber: number;
+  rects: HighlightRect[];
+};
 interface PDFState {
   pdfDocumentProxy: PDFDocumentProxy;
 
@@ -22,6 +39,9 @@ interface PDFState {
 
   pageProxies: PDFPageProxy[];
 
+  textContent: TextContent[];
+  setTextContent: (textContents: TextContent[]) => void;
+
   zoomOptions: {
     minZoom: number;
     maxZoom: number;
@@ -29,6 +49,9 @@ interface PDFState {
 
   virtualizer: PDFVirtualizer | null;
   setVirtualizer: (virtualizer: PDFVirtualizer) => void;
+
+  highlights: HighlightArea[];
+  setHighlight: (higlights: HighlightArea[]) => void;
 
   getPdfPageProxy: (pageNumber: number) => PDFPageProxy;
 }
@@ -91,6 +114,19 @@ export const PDFStore = createZustandContext(
       getPdfPageProxy: (pageNumber) => {
         const proxy = get().pageProxies[pageNumber - 1];
         return proxy;
+      },
+
+      textContent: [],
+      setTextContent: (val) => {
+        set({
+          textContent: val,
+        });
+      },
+      highlights: [],
+      setHighlight: (val) => {
+        set({
+          highlights: val,
+        });
       },
     }));
   },
