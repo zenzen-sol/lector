@@ -4,6 +4,7 @@ import { PageViewport, PDFDocumentProxy, PDFPageProxy } from "pdfjs-dist";
 import { clamp } from "./viewport/utils";
 import { createRef } from "react";
 import { Virtualizer } from "@tanstack/react-virtual";
+import { getFitWidthZoom } from "./zoom";
 
 type TextContent = {
   pageNumber: number;
@@ -27,6 +28,8 @@ interface PDFState {
 
   zoom: number;
   updateZoom: (zoom: number | ((prevZoom: number) => number)) => void;
+
+  zoomFitWidth: () => void;
 
   isPinching: boolean;
   setIsPinching: (isPinching: boolean) => void;
@@ -87,6 +90,23 @@ export const PDFStore = createZustandContext(
           const newZoom = clamp(zoom, minZoom, maxZoom);
           return { zoom: newZoom };
         });
+      },
+      zoomFitWidth: () => {
+        const { viewportRef, zoomOptions, viewports } = get();
+
+        if (!viewportRef.current) return;
+
+        const clampedZoom = getFitWidthZoom(
+          viewportRef.current.clientWidth,
+          viewports,
+          zoomOptions,
+        );
+
+        set(() => {
+          return { zoom: clampedZoom, fitWidthZoom: clampedZoom };
+        });
+
+        return clampedZoom;
       },
 
       currentPage: 1,

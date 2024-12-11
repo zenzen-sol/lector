@@ -101,7 +101,6 @@ export const Pages = ({
     <div
       style={{
         height: `${virtualizer.getTotalSize()}px`,
-        width: "100%",
         position: "relative",
       }}
     >

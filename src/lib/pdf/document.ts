@@ -93,7 +93,6 @@ export const usePDFDocumentContext = ({
 
     setInitialState({
       viewports,
-      // defaultRotations: rotations,
       pageProxies,
       pdfDocumentProxy: pdf,
     });
