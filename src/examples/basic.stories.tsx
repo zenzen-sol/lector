@@ -6,7 +6,6 @@ import {
   CurrentPage,
   CustomLayer,
   HighlightLayer,
-  HighlightArea,
   Outline,
   OutlineChildItems,
   OutlineItem,

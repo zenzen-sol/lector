@@ -9,7 +9,7 @@ import { CurrentPage, TotalPages } from "./Controls/PageNumber";
 import { CurrentZoom, ZoomIn, ZoomOut } from "./Controls/Zoom";
 import { Thumbnail, Thumbnails } from "./Thumbnails";
 import { usePDF } from "@/lib/internal";
-export { HighlightLayer, type HighlightArea } from "./Highlight";
+export { HighlightLayer } from "./Highlight";
 export { SelectionTooltip } from "./Tooltip";
 
 export const Debug = () => {
