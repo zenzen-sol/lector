@@ -1,5 +1,4 @@
-import { HighlightArea } from "@/components";
-import { usePDF } from "./internal";
+import { HighlightArea, usePDF } from "./internal";
 
 export const usePDFJump = () => {
   const virtualizer = usePDF((state) => state.virtualizer);

@@ -1,5 +1,4 @@
-import { HighlightArea } from "@/components";
-import { HighlightRect } from "@/components/Highlight";
+import { HighlightArea, HighlightRect } from "@/lib/internal";
 import { useEffect, useState } from "react";
 
 interface SelectionRect {
