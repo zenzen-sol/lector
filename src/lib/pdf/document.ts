@@ -25,7 +25,7 @@ export interface usePDFDocumentParams {
    * The URL of the PDF file to load.
    */
   fileURL: string;
-  onDocumentLoad?: (url: string) => void;
+  onDocumentLoad?: (pdfDocumentProxy: PDFDocumentProxy) => void;
   initialRotation?: number;
 }
 
@@ -56,7 +56,7 @@ export const usePDFDocumentContext = ({
 
     loadingTask.promise.then(
       (proxy) => {
-        onDocumentLoad?.(fileURL);
+        onDocumentLoad?.(proxy);
         setProgress(1);
 
         generateViewports(proxy);
