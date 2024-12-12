@@ -11,6 +11,7 @@ import { Thumbnail, Thumbnails } from "./Thumbnails";
 import { usePDF } from "@/lib/internal";
 export { HighlightLayer } from "./Highlight";
 export { SelectionTooltip } from "./Tooltip";
+import { Search } from "./Search";
 
 export const Debug = () => {
   const { zoom, currentPage } = usePDF((state) => ({
@@ -83,4 +84,5 @@ export {
   ZoomOut,
   Thumbnail,
   Thumbnails,
+  Search,
 };
