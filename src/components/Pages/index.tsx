@@ -29,7 +29,7 @@ export interface PagesProps {
 }
 export const Pages = ({
   children,
-  virtualizerOptions = { overscan: 10 },
+  virtualizerOptions = { overscan: 5 },
 }: PagesProps) => {
   const [tempItems, setTempItems] = useState<VirtualItem[]>([]);
 

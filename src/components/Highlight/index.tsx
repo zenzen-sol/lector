@@ -34,6 +34,7 @@ export const HighlightLayer = forwardRef<
             height: rect.height,
             width: rect.width,
             pointerEvents: "none",
+            zIndex: 30,
             ...style,
           }}
           {...props}

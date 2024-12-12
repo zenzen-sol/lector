@@ -12,6 +12,8 @@ import { usePDF } from "@/lib/internal";
 export { HighlightLayer } from "./Highlight";
 export { SelectionTooltip } from "./Tooltip";
 import { Search } from "./Search";
+import { CustomSelection } from "./Highlight/CustomSelection";
+import { CustomSelectionTrigger } from "./Highlight/CustomSelectionTrigger";
 
 export const Debug = () => {
   const { zoom, currentPage } = usePDF((state) => ({
@@ -85,4 +87,6 @@ export {
   Thumbnail,
   Thumbnails,
   Search,
+  CustomSelection,
+  CustomSelectionTrigger,
 };

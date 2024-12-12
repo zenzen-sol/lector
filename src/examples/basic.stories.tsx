@@ -24,6 +24,9 @@ import clsx from "clsx";
 import { useSelectionDimensions } from "@/hooks/useSelectionDimensions";
 import { SearchUI } from "./custom-search";
 import { Search } from "@/components/Search";
+import { usePDF } from "@/lib/internal";
+import { CustomSelection } from "@/components/Highlight/CustomSelection";
+import { CustomSelectionTrigger } from "@/components/Highlight/CustomSelectionTrigger";
 
 const meta: Meta<typeof Root> = {
   title: "Viewer",
@@ -379,37 +382,47 @@ export const WithCustomLayer: Story = {
   },
 };
 
+const SelectionHighlight = () => {
+  const setHighlight = usePDF((state) => state.setHighlight);
+  const { getDimension } = useSelectionDimensions();
+
+  return (
+    <button
+      onClick={() => {
+        const dimensions = getDimension();
+        if (!dimensions) return;
+
+        setHighlight(dimensions.highlights);
+        // setHighlights(dimensions.highlights);
+      }}
+      className="bg-gray-50 px-2 py-1 text-sm rounded-md hover:bg-gray-100"
+    >
+      Highlight
+    </button>
+  );
+};
+
 export const WithHighlightLayer: Story = {
   render: ({ fileURL }: { fileURL: string }) => {
-    const { getDimension } = useSelectionDimensions();
-
     return (
       <Root
         fileURL={fileURL}
         className="bg-gray-100 border rounded-md overflow-hidden relative h-[700px]"
         loader={<div className="p-4">Loading...</div>}
       >
-        <Viewport className="p-4 h-full">
+        <Viewport className="p-4 h-full [&_*::selection]:!bg-transparent ">
+          <CustomSelectionTrigger />
           <Pages>
             <Page>
               <CanvasLayer />
               <TextLayer />
-              <HighlightLayer className="bg-blue-200/70" />
+              <CustomSelection />
+              <HighlightLayer className="bg-[#017aff] mix-blend-color" />
             </Page>
           </Pages>
-          <SelectionTooltip>
-            <button
-              onClick={() => {
-                const dimensions = getDimension();
-                if (!dimensions) return;
-
-                // setHighlights(dimensions.highlights);
-              }}
-              className="bg-gray-50 px-2 py-1 text-sm rounded-md hover:bg-gray-100"
-            >
-              Highlight
-            </button>
-          </SelectionTooltip>
+          {/* <SelectionTooltip>
+            <SelectionHighlight />
+          </SelectionTooltip> */}
         </Viewport>
       </Root>
     );

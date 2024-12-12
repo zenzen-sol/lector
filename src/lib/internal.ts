@@ -57,6 +57,9 @@ interface PDFState {
   setHighlight: (higlights: HighlightArea[]) => void;
 
   getPdfPageProxy: (pageNumber: number) => PDFPageProxy;
+
+  customSelectionRects: HighlightArea[];
+  setCustomSelectionRects: (rects: HighlightArea[]) => void;
 }
 
 export type PDFVirtualizer = Virtualizer<any, any>;
@@ -146,6 +149,13 @@ export const PDFStore = createZustandContext(
       setHighlight: (val) => {
         set({
           highlights: val,
+        });
+      },
+
+      customSelectionRects: [],
+      setCustomSelectionRects: (val) => {
+        set({
+          customSelectionRects: val,
         });
       },
     }));
