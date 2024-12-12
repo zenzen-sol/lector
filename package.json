@@ -1,6 +1,6 @@
 {
   "name": "@unriddle-ai/pdf-viewer",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Easiest way to display and interact with PDFs from your web app.",
   "main": "dist/pdf-viewer.cjs",
   "types": "dist/src/index.d.ts",
