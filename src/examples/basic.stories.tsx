@@ -16,7 +16,6 @@ import {
   TextLayer,
   Thumbnail,
   Thumbnails,
-  Viewport,
 } from "@/components";
 import { CurrentZoom, ZoomIn, ZoomOut } from "@/components/Controls/Zoom";
 import { useState } from "react";
@@ -43,13 +42,11 @@ export const Basic: Story = {
       className="bg-gray-100 border rounded-md overflow-hidden relative h-[500px]"
       loader={<div className="p-4">Loading...</div>}
     >
-      <Viewport className="p-4 h-full">
-        <Pages>
-          <Page>
-            <CanvasLayer />
-          </Page>
-        </Pages>
-      </Viewport>
+      <Pages className="p-4 h-full">
+        <Page>
+          <CanvasLayer />
+        </Page>
+      </Pages>
     </Root>
   ),
   args: {
@@ -64,14 +61,12 @@ export const WithTextLayer: Story = {
       className="bg-gray-100 border rounded-md overflow-hidden relative h-[500px]"
       loader={<div className="p-4">Loading...</div>}
     >
-      <Viewport className="p-4 h-full">
-        <Pages>
-          <Page>
-            <CanvasLayer />
-            <TextLayer />
-          </Page>
-        </Pages>
-      </Viewport>
+      <Pages className="p-4 h-full">
+        <Page>
+          <CanvasLayer />
+          <TextLayer />
+        </Page>
+      </Pages>
     </Root>
   ),
   args: {
@@ -86,15 +81,13 @@ export const WithInternalLinks: Story = {
       className="bg-gray-100 border rounded-md overflow-hidden relative h-[500px]"
       loader={<div className="p-4">Loading...</div>}
     >
-      <Viewport className="p-4 h-full">
-        <Pages>
-          <Page>
-            <CanvasLayer />
-            <TextLayer />
-            <AnnotationLayer />
-          </Page>
-        </Pages>
-      </Viewport>
+      <Pages className="p-4 h-full">
+        <Page>
+          <CanvasLayer />
+          <TextLayer />
+          <AnnotationLayer />
+        </Page>
+      </Pages>
     </Root>
   ),
   args: {
@@ -109,15 +102,13 @@ export const WithAnnotationLayer: Story = {
       className="bg-gray-100 border rounded-md overflow-hidden relative h-[500px]"
       loader={<div className="p-4">Loading...</div>}
     >
-      <Viewport className="p-4 h-full">
-        <Pages>
-          <Page>
-            <CanvasLayer />
-            <TextLayer />
-            <AnnotationLayer />
-          </Page>
-        </Pages>
-      </Viewport>
+      <Pages className="p-4 h-full">
+        <Page>
+          <CanvasLayer />
+          <TextLayer />
+          <AnnotationLayer />
+        </Page>
+      </Pages>
     </Root>
   ),
   args: {
@@ -132,15 +123,13 @@ export const WithFormControls: Story = {
       className="bg-gray-100 border rounded-md overflow-hidden relative h-[500px]"
       loader={<div className="p-4">Loading...</div>}
     >
-      <Viewport className="p-4 h-full">
-        <Pages>
-          <Page>
-            <CanvasLayer />
-            <TextLayer />
-            <AnnotationLayer />
-          </Page>
-        </Pages>
-      </Viewport>
+      <Pages className="p-4 h-full">
+        <Page>
+          <CanvasLayer />
+          <TextLayer />
+          <AnnotationLayer />
+        </Page>
+      </Pages>
     </Root>
   ),
   args: {
@@ -159,15 +148,13 @@ export const WithPageControl: Story = {
         Page
         <CurrentPage className="bg-white rounded-full px-3 py-1 border text-center" />
       </div>
-      <Viewport className="p-4">
-        <Pages>
-          <Page>
-            <CanvasLayer />
-            <TextLayer />
-            <AnnotationLayer />
-          </Page>
-        </Pages>
-      </Viewport>
+      <Pages className="p-4 h-full">
+        <Page>
+          <CanvasLayer />
+          <TextLayer />
+          <AnnotationLayer />
+        </Page>
+      </Pages>
     </Root>
   ),
   args: {
@@ -188,15 +175,13 @@ export const WithZoomControl: Story = {
         <CurrentZoom className="bg-white rounded-full px-3 py-1 border text-center w-16" />
         <ZoomIn className="px-3 py-1 -ml-2 text-gray-900">+</ZoomIn>
       </div>
-      <Viewport className="p-4">
-        <Pages>
-          <Page>
-            <CanvasLayer />
-            <TextLayer />
-            <AnnotationLayer />
-          </Page>
-        </Pages>
-      </Viewport>
+      <Pages className="p-4 h-full">
+        <Page>
+          <CanvasLayer />
+          <TextLayer />
+          <AnnotationLayer />
+        </Page>
+      </Pages>
     </Root>
   ),
   args: {
@@ -215,15 +200,13 @@ export const WithSearchControl: Story = {
         <Search>
           <SearchUI />
         </Search>
-        <Viewport className="p-4 h-[700px]">
-          <Pages>
-            <Page>
-              <CanvasLayer />
-              <TextLayer />
-              <HighlightLayer className="bg-yellow-200/70" />
-            </Page>
-          </Pages>
-        </Viewport>
+        <Pages className="p-4 h-full">
+          <Page>
+            <CanvasLayer />
+            <TextLayer />
+            <HighlightLayer className="bg-yellow-200/70" />
+          </Page>
+        </Pages>
       </Root>
     );
   },
@@ -274,15 +257,13 @@ export const WithOutline: Story = {
               </Outline>
             </div>
           </div>
-          <Viewport className="p-4 h-full">
-            <Pages>
-              <Page>
-                <CanvasLayer />
-                <TextLayer />
-                <AnnotationLayer />
-              </Page>
-            </Pages>
-          </Viewport>
+          <Pages className="p-4 h-full">
+            <Page>
+              <CanvasLayer />
+              <TextLayer />
+              <AnnotationLayer />
+            </Page>
+          </Pages>
         </div>
       </Root>
     );
@@ -332,15 +313,13 @@ export const WithThumbnails: Story = {
               </Thumbnails>
             </div>
           </div>
-          <Viewport className="p-4 h-full">
-            <Pages>
-              <Page>
-                <CanvasLayer />
-                <TextLayer />
-                <AnnotationLayer />
-              </Page>
-            </Pages>
-          </Viewport>
+          <Pages className="p-4 h-full">
+            <Page>
+              <CanvasLayer />
+              <TextLayer />
+              <AnnotationLayer />
+            </Page>
+          </Pages>
         </div>
       </Root>
     );
@@ -357,24 +336,22 @@ export const WithCustomLayer: Story = {
       className="bg-gray-100 border rounded-md overflow-hidden relative h-[500px]"
       loader={<div className="p-4">Loading...</div>}
     >
-      <Viewport className="p-4 h-full">
-        <Pages>
-          <Page>
-            <CanvasLayer />
-            <CustomLayer>
-              {(pageNumber) => {
-                return (
-                  <div className="relative">
-                    <p className="bg-white border p-2">
-                      This is page {pageNumber}
-                    </p>
-                  </div>
-                );
-              }}
-            </CustomLayer>
-          </Page>
-        </Pages>
-      </Viewport>
+      <Pages className="p-4 h-full">
+        <Page>
+          <CanvasLayer />
+          <CustomLayer>
+            {(pageNumber) => {
+              return (
+                <div className="relative">
+                  <p className="bg-white border p-2">
+                    This is page {pageNumber}
+                  </p>
+                </div>
+              );
+            }}
+          </CustomLayer>
+        </Page>
+      </Pages>
     </Root>
   ),
   args: {
@@ -406,24 +383,24 @@ export const WithHighlightLayer: Story = {
   render: ({ fileURL }: { fileURL: string }) => {
     return (
       <Root
+        isZoomFitWidth={true}
         fileURL={fileURL}
         className="bg-gray-100 border rounded-md overflow-hidden relative h-[700px]"
         loader={<div className="p-4">Loading...</div>}
       >
-        <Viewport className="p-4 h-full [&_*::selection]:!bg-transparent ">
-          <CustomSelectionTrigger />
-          <Pages>
-            <Page>
-              <CanvasLayer />
-              <TextLayer />
-              <CustomSelection />
-              <HighlightLayer className="bg-[#017aff] mix-blend-color" />
-            </Page>
-          </Pages>
-          {/* <SelectionTooltip>
+        <CustomSelectionTrigger />
+
+        <Pages className="p-4 h-full [&_*::selection]:!bg-transparent ">
+          <Page>
+            <CanvasLayer />
+            <TextLayer />
+            <CustomSelection />
+            <HighlightLayer className="bg-[#017aff] mix-blend-color" />
+          </Page>
+        </Pages>
+        {/* <SelectionTooltip>
             <SelectionHighlight />
           </SelectionTooltip> */}
-        </Viewport>
       </Root>
     );
   },
@@ -448,27 +425,25 @@ export const WithCustomFormLayer: Story = {
         className="bg-gray-100 border rounded-md overflow-hidden relative h-[500px]"
         loader={<div className="p-4">Loading...</div>}
       >
-        <Viewport className="p-4 h-full">
-          <Pages>
-            <Page>
-              <CanvasLayer />
-              <CustomLayer>
-                {(pageNumber) => {
-                  return (
-                    <div className="relative">
-                      <input
-                        name={`${pageNumber}-input`}
-                        className="p-2 border rounded-md m-2"
-                        placeholder={`Input for page ${pageNumber}`}
-                        type="text"
-                      />
-                    </div>
-                  );
-                }}
-              </CustomLayer>
-            </Page>
-          </Pages>
-        </Viewport>
+        <Pages className="p-4 h-full">
+          <Page>
+            <CanvasLayer />
+            <CustomLayer>
+              {(pageNumber) => {
+                return (
+                  <div className="relative">
+                    <input
+                      name={`${pageNumber}-input`}
+                      className="p-2 border rounded-md m-2"
+                      placeholder={`Input for page ${pageNumber}`}
+                      type="text"
+                    />
+                  </div>
+                );
+              }}
+            </CustomLayer>
+          </Page>
+        </Pages>
       </Root>
     </form>
   ),
@@ -494,15 +469,13 @@ export const WithPDFFormValues: Story = {
         className="bg-gray-100 border rounded-md overflow-hidden relative h-[500px]"
         loader={<div className="p-4">Loading...</div>}
       >
-        <Viewport className="p-4 h-full">
-          <Pages>
-            <Page>
-              <CanvasLayer />
-              <TextLayer />
-              <AnnotationLayer />
-            </Page>
-          </Pages>
-        </Viewport>
+        <Pages className="p-4 h-full">
+          <Page>
+            <CanvasLayer />
+            <TextLayer />
+            <AnnotationLayer />
+          </Page>
+        </Pages>
       </Root>
     </form>
   ),

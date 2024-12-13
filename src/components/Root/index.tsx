@@ -14,6 +14,7 @@ export const Root = forwardRef(
       fileURL,
       loader,
       onDocumentLoad,
+      isZoomFitWidth,
       ...props
     }: HTMLProps<HTMLDivElement> &
       usePDFDocumentParams & {
@@ -24,6 +25,7 @@ export const Root = forwardRef(
     const { initialState } = usePDFDocumentContext({
       fileURL,
       onDocumentLoad,
+      isZoomFitWidth,
     });
 
     return (

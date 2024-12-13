@@ -1,5 +1,4 @@
 import "pdfjs-dist/web/pdf_viewer.css";
-import { Viewport } from "./Viewport";
 import { Root } from "./Root";
 import { Page } from "./Page";
 import { AnnotationLayer, CanvasLayer, TextLayer, CustomLayer } from "./Layers";
@@ -53,22 +52,19 @@ export const Example = ({ fileURL }: { fileURL: string }) => {
         <Thumbnails className="flex flex-col items-center gap-y-4 p-4 border-r overflow-auto relative bg-gray-300">
           <Thumbnail className="w-[80%] shadow-md" />
         </Thumbnails>
-        <Viewport className="bg-gray-100 py-4">
-          <Pages>
-            <Page className="shadow-xl m-8 my-4 first:mt-8 outline outline-black/5 rounded-md overflow-hidden">
-              <CanvasLayer />
-              <TextLayer />
-              <AnnotationLayer />
-            </Page>
-          </Pages>
-        </Viewport>
+        <Pages className="bg-gray-100 py-4">
+          <Page className="shadow-xl m-8 my-4 first:mt-8 outline outline-black/5 rounded-md overflow-hidden">
+            <CanvasLayer />
+            <TextLayer />
+            <AnnotationLayer />
+          </Page>
+        </Pages>
       </div>
     </Root>
   );
 };
 
 export {
-  Viewport,
   Root,
   Page,
   AnnotationLayer,

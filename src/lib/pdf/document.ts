@@ -33,12 +33,14 @@ export interface usePDFDocumentParams {
     documentUrl: string;
   }) => void;
   initialRotation?: number;
+  isZoomFitWidth?: boolean;
 }
 
 export const usePDFDocumentContext = ({
   onDocumentLoad,
   fileURL,
   initialRotation = 0,
+  isZoomFitWidth,
 }: usePDFDocumentParams) => {
   const [progress, setProgress] = useState(0);
 
@@ -98,6 +100,7 @@ export const usePDFDocumentContext = ({
     );
 
     setInitialState({
+      isZoomFitWidth,
       viewports,
       pageProxies,
       pdfDocumentProxy: pdf,

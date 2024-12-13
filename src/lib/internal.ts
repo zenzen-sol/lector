@@ -29,6 +29,7 @@ interface PDFState {
   zoom: number;
   updateZoom: (zoom: number | ((prevZoom: number) => number)) => void;
 
+  isZoomFitWidth: boolean;
   zoomFitWidth: () => void;
 
   isPinching: boolean;
@@ -50,7 +51,7 @@ interface PDFState {
     maxZoom: number;
   };
 
-  getVirtualizer: () => PDFVirtualizer;
+  virtualizer: PDFVirtualizer | null;
   setVirtualizer: (virtualizer: PDFVirtualizer) => void;
 
   highlights: HighlightArea[];
@@ -67,7 +68,7 @@ export type PDFVirtualizer = Virtualizer<any, any>;
 export type InitialPDFState = Pick<
   PDFState,
   "pdfDocumentProxy" | "pageProxies" | "viewports"
->;
+> & { isZoomFitWidth?: boolean };
 
 export const PDFStore = createZustandContext(
   (initialState: InitialPDFState) => {
@@ -75,6 +76,7 @@ export const PDFStore = createZustandContext(
       pdfDocumentProxy: initialState.pdfDocumentProxy,
 
       zoom: 1,
+      isZoomFitWidth: initialState.isZoomFitWidth ?? false,
       zoomOptions: {
         minZoom: 0.5,
         maxZoom: 10,
@@ -126,12 +128,10 @@ export const PDFStore = createZustandContext(
         });
       },
 
-      getVirtualizer: () => {
-        throw new Error("getVirtualizer must be called after initial render");
-      },
+      virtualizer: null,
       setVirtualizer: (val) => {
         set({
-          getVirtualizer: () => val,
+          virtualizer: val,
         });
       },
 

@@ -1,7 +1,10 @@
 import { elementScroll, VirtualizerOptions } from "@tanstack/react-virtual";
-import { useCallback, useContext, useRef } from "react";
-import { easeOutQuint } from ".";
+import { useCallback, useRef } from "react";
 import { PDFStore, usePDF } from "@/lib/internal";
+
+const easeOutQuint = (t: number) => {
+  return 1 - Math.pow(1 - t, 5);
+};
 
 export const useScrollFn = () => {
   const scrollingRef = useRef<number | null>(null);
