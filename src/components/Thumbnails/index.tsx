@@ -8,32 +8,39 @@ export const Thumbnail = ({
   pageNumber = 1,
   ...props
 }: HTMLProps<HTMLCanvasElement> & { pageNumber?: number }) => {
-  const { canvasRef } = useThumbnail(pageNumber);
+  const { canvasRef, simpleRef, visible } = useThumbnail(
+    pageNumber,
+    pageNumber < 5,
+  );
   const { jumpToPage } = usePDFJump();
 
   return (
-    <Primitive.canvas
-      {...props}
-      role="button"
-      tabIndex={0}
-      onClick={(e: any) => {
-        if (props.onClick) {
-          props.onClick(e);
-        }
+    <div ref={simpleRef} style={{ minHeight: "150px", minWidth: "10px" }}>
+      {visible && (
+        <Primitive.canvas
+          {...props}
+          role="button"
+          tabIndex={0}
+          onClick={(e: any) => {
+            if (props.onClick) {
+              props.onClick(e);
+            }
 
-        jumpToPage(pageNumber, { behavior: "auto" });
-      }}
-      onKeyDown={(e: any) => {
-        if (props.onKeyDown) {
-          props.onKeyDown(e);
-        }
+            jumpToPage(pageNumber, { behavior: "auto" });
+          }}
+          onKeyDown={(e: any) => {
+            if (props.onKeyDown) {
+              props.onKeyDown(e);
+            }
 
-        if (e.key === "Enter") {
-          jumpToPage(pageNumber, { behavior: "auto" });
-        }
-      }}
-      ref={canvasRef}
-    />
+            if (e.key === "Enter") {
+              jumpToPage(pageNumber, { behavior: "auto" });
+            }
+          }}
+          ref={canvasRef}
+        />
+      )}
+    </div>
   );
 };
 

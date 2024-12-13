@@ -1,4 +1,4 @@
-import { useDebounce } from "@uidotdev/usehooks";
+import { useDebounce, useIntersectionObserver } from "@uidotdev/usehooks";
 import { useEffect, useRef } from "react";
 
 import { useDPR, useVisibility } from "../viewport";
@@ -7,25 +7,30 @@ import { usePDF } from "../internal";
 
 export const useThumbnail = (
   pageNumber: number,
-  options: {
-    maxWidth?: number;
-    maxHeight?: number;
-  } = {},
+
+  isFirstPage = false,
 ) => {
   const pageProxy = usePDF((state) => state.getPdfPageProxy(pageNumber));
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dpr = useDPR();
-  const { visible } = useVisibility({ elementRef: canvasRef });
-  const debouncedVisible = useDebounce(visible, 100);
+  const [simpleRef, entry] = useIntersectionObserver({
+    threshold: 0,
+    root: null,
+    rootMargin: "0px",
+  });
+
+  const debouncedVisible = useDebounce(!!entry?.isIntersecting, 50);
 
   const { maxHeight, maxWidth } = Object.assign(
     {
       maxHeight: 800,
       maxWidth: 400,
     },
-    options,
+    {},
   );
+
+  const forcedVisible = isFirstPage ? true : debouncedVisible;
 
   useEffect(() => {
     const { cancel } = cancellable(
@@ -43,7 +48,7 @@ export const useThumbnail = (
           maxHeight / viewport.height,
         );
 
-        const scale = smallestScale * (debouncedVisible ? dpr : 0.5);
+        const scale = smallestScale * (forcedVisible ? dpr : 0.5);
 
         const viewportScaled = page.getViewport({ scale });
 
@@ -66,9 +71,11 @@ export const useThumbnail = (
     return () => {
       cancel();
     };
-  }, [pageNumber, pageProxy, debouncedVisible]);
+  }, [pageNumber, pageProxy, forcedVisible]);
 
   return {
     canvasRef,
+    simpleRef,
+    visible: forcedVisible,
   };
 };
