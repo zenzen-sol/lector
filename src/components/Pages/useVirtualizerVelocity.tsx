@@ -3,10 +3,8 @@ import { useEffect, useState } from "react";
 
 const useVirtualizerVelocity = ({
   virtualizer,
-  estimateSize,
 }: {
   virtualizer: Virtualizer<HTMLDivElement, Element> | null;
-  estimateSize: (index: number) => number;
 }) => {
   const [lastScrollOffset, setLastScrollOffset] = useState<number>(0);
   const [velocity, setVelocity] = useState<number>(0);
@@ -28,6 +26,7 @@ const useVirtualizerVelocity = ({
       // velocity is normalized by the height of the element
       // so the interpretation is how many heights of a page
       // the page is scrolling per 100ms.
+      const estimateSize = virtualizer.options.estimateSize;
       setNormalizedVelocity(newVelocity / estimateSize(0));
 
       // Update the state with the new values
@@ -40,7 +39,7 @@ const useVirtualizerVelocity = ({
 
     // Clear the interval on component unmount
     return () => clearInterval(interval);
-  }, [lastScrollOffset, virtualizer, estimateSize]);
+  }, [lastScrollOffset, virtualizer]);
 
   return { velocity, normalizedVelocity };
 };

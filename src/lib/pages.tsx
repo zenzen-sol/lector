@@ -1,7 +1,7 @@
 import { HighlightArea, usePDF } from "./internal";
 
 export const usePDFJump = () => {
-  const virtualizer = usePDF((state) => state.virtualizer);
+  const virtualizer = usePDF((state) => state.getVirtualizer());
   const setHighlight = usePDF((state) => state.setHighlight);
 
   const jumpToPage = (

@@ -50,7 +50,7 @@ interface PDFState {
     maxZoom: number;
   };
 
-  virtualizer: PDFVirtualizer | null;
+  getVirtualizer: () => PDFVirtualizer;
   setVirtualizer: (virtualizer: PDFVirtualizer) => void;
 
   highlights: HighlightArea[];
@@ -126,10 +126,12 @@ export const PDFStore = createZustandContext(
         });
       },
 
-      virtualizer: null,
+      getVirtualizer: () => {
+        throw new Error("getVirtualizer must be called after initial render");
+      },
       setVirtualizer: (val) => {
         set({
-          virtualizer: val,
+          getVirtualizer: () => val,
         });
       },
 

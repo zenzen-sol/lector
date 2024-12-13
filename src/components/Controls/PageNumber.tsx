@@ -11,7 +11,7 @@ export const CurrentPage = ({ ...props }: HTMLProps<HTMLInputElement>) => {
   const [pageNumber, setPageNumber] = useState<string | number>(currentPage);
   const isSelected = useRef<boolean>(false);
 
-  const { jumpToHighlightArea, jumpToOffset, jumpToPage } = usePDFJump();
+  const { jumpToPage } = usePDFJump();
 
   useEffect(() => {
     if (isSelected.current) {
