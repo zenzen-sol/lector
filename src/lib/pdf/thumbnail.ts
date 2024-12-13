@@ -12,7 +12,7 @@ export const useThumbnail = (
     maxHeight?: number;
   } = {},
 ) => {
-  const pdfDocumentProxy = usePDF((state) => state.pdfDocumentProxy);
+  const pageProxy = usePDF((state) => state.getPdfPageProxy(pageNumber));
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dpr = useDPR();
@@ -35,8 +35,7 @@ export const useThumbnail = (
           return;
         }
 
-        const page = await pdfDocumentProxy.getPage(pageNumber);
-
+        const page = pageProxy;
         const viewport = page.getViewport({ scale: 1 });
 
         const smallestScale = Math.min(
@@ -49,6 +48,8 @@ export const useThumbnail = (
         const viewportScaled = page.getViewport({ scale });
 
         const canvas = canvasRef.current;
+
+        if (!canvas) return;
 
         canvas.width = viewportScaled.width;
         canvas.height = viewportScaled.height;
@@ -65,7 +66,7 @@ export const useThumbnail = (
     return () => {
       cancel();
     };
-  }, [pageNumber, pdfDocumentProxy, debouncedVisible]);
+  }, [pageNumber, pageProxy, debouncedVisible]);
 
   return {
     canvasRef,
