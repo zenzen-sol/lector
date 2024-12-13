@@ -1,4 +1,4 @@
-import { usePDF } from "@/lib/internal";
+import { PDFStore, usePDF } from "@/lib/internal";
 import { getFitWidthZoom } from "@/lib/zoom";
 import React, { useEffect, useLayoutEffect } from "react";
 
@@ -9,21 +9,23 @@ export const useFitWidth = ({ viewportRef }: UseFitWidth) => {
   const viewports = usePDF((state) => state.viewports);
   const zoomOptions = usePDF((state) => state.zoomOptions);
 
-  const isFitWidth = usePDF((state) => state.isZoomFitWidth);
   const updateZoom = usePDF((state) => state.updateZoom);
+  const store = PDFStore.useContext();
 
   useLayoutEffect(() => {
-    if (viewportRef.current === null || !isFitWidth) return;
+    if (viewportRef.current === null) return;
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        if (entry.target === viewportRef.current) {
+        const isFitWidth = store.getState().isZoomFitWidth;
+
+        if (entry.target === viewportRef.current && isFitWidth) {
           const containerWidth = entry.contentRect.width;
           const newZoom = getFitWidthZoom(
             containerWidth,
             viewports,
             zoomOptions,
           );
-          updateZoom(newZoom);
+          updateZoom(newZoom, true);
         }
       }
     });
@@ -33,7 +35,7 @@ export const useFitWidth = ({ viewportRef }: UseFitWidth) => {
     return () => {
       resizeObserver.disconnect();
     };
-  }, [isFitWidth, viewports, zoomOptions]);
+  }, [viewports, zoomOptions]);
 
   return null;
 };

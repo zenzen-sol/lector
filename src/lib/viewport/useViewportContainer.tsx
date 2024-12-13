@@ -32,7 +32,6 @@ export const useViewportContainer = ({
     viewportRef.current = containerRef.current;
   }, [containerRef.current]);
 
-  const isFitWidth = usePDF((state) => state.zoomFitWidth);
   const initialWidth = useRef<{
     width: number;
     fullyInitialized: boolean;
@@ -48,35 +47,38 @@ export const useViewportContainer = ({
     zoom,
   });
 
-  const updateTransform = useCallback(() => {
-    if (
-      !elementRef.current ||
-      !containerRef.current ||
-      !elementWrapperRef.current
-    ) {
-      return;
-    }
+  const updateTransform = useCallback(
+    (zoomUpdate?: boolean) => {
+      if (
+        !elementRef.current ||
+        !containerRef.current ||
+        !elementWrapperRef.current
+      ) {
+        return;
+      }
 
-    const { zoom, translateX, translateY } = transformations.current;
+      const { zoom, translateX, translateY } = transformations.current;
 
-    elementRef.current.style.transform = `scale3d(${zoom}, ${zoom}, 1)`;
+      elementRef.current.style.transform = `scale3d(${zoom}, ${zoom}, 1)`;
 
-    const elementBoundingBox = elementRef.current.getBoundingClientRect();
+      const elementBoundingBox = elementRef.current.getBoundingClientRect();
 
-    let width = elementBoundingBox.width;
-    if (!initialWidth.current && elementBoundingBox.width > 0) {
-      width = elementBoundingBox.width * zoom;
-      initialWidth.current = { fullyInitialized: false, width };
-    }
+      let width = elementBoundingBox.width;
+      if (!initialWidth.current && elementBoundingBox.width > 0) {
+        width = elementBoundingBox.width * zoom;
+        initialWidth.current = { fullyInitialized: false, width };
+      }
 
-    elementWrapperRef.current.style.width = `${width}px`;
-    elementWrapperRef.current.style.height = `${elementBoundingBox.height}px`;
+      elementWrapperRef.current.style.width = `${width}px`;
+      elementWrapperRef.current.style.height = `${elementBoundingBox.height}px`;
 
-    containerRef.current.scrollTop = translateY;
-    containerRef.current.scrollLeft = translateX;
+      containerRef.current.scrollTop = translateY;
+      containerRef.current.scrollLeft = translateX;
 
-    updateZoom(() => transformations.current.zoom);
-  }, [containerRef.current, elementRef.current, updateZoom, zoom]);
+      if (zoomUpdate) updateZoom(() => transformations.current.zoom);
+    },
+    [containerRef.current, elementRef.current, updateZoom, zoom],
+  );
 
   useEffect(() => {
     if (transformations.current.zoom === zoom || !containerRef.current) {
@@ -193,7 +195,7 @@ export const useViewportContainer = ({
           translateY: newTranslateY,
         };
 
-        updateTransform();
+        updateTransform(true);
 
         return newMemo;
       },

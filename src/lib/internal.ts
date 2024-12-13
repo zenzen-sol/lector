@@ -27,7 +27,10 @@ interface PDFState {
   pdfDocumentProxy: PDFDocumentProxy;
 
   zoom: number;
-  updateZoom: (zoom: number | ((prevZoom: number) => number)) => void;
+  updateZoom: (
+    zoom: number | ((prevZoom: number) => number),
+    isZoomFitWidth?: boolean,
+  ) => void;
 
   isZoomFitWidth: boolean;
   zoomFitWidth: () => void;
@@ -85,17 +88,19 @@ export const PDFStore = createZustandContext(
       viewportRef: createRef<HTMLDivElement>(),
       viewports: initialState.viewports,
 
-      updateZoom: (zoom) => {
+      updateZoom: (zoom, isZoomFitWidth = false) => {
         const { minZoom, maxZoom } = get().zoomOptions;
+
         set((state) => {
           if (typeof zoom === "function") {
             const newZoom = clamp(zoom(state.zoom), minZoom, maxZoom);
-            return { zoom: newZoom };
+            return { zoom: newZoom, isZoomFitWidth };
           }
           const newZoom = clamp(zoom, minZoom, maxZoom);
-          return { zoom: newZoom };
+          return { zoom: newZoom, isZoomFitWidth };
         });
       },
+
       zoomFitWidth: () => {
         const { viewportRef, zoomOptions, viewports } = get();
 
@@ -107,8 +112,9 @@ export const PDFStore = createZustandContext(
           zoomOptions,
         );
 
-        set(() => {
-          return { zoom: clampedZoom, fitWidthZoom: clampedZoom };
+        set({
+          zoom: clampedZoom,
+          isZoomFitWidth: true,
         });
 
         return clampedZoom;
