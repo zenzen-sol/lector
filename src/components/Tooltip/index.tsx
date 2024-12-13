@@ -1,17 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
-
 import {
   useFloating,
   useDismiss,
   useInteractions,
   autoUpdate,
 } from "@floating-ui/react";
+import { usePDF } from "@/lib/internal";
 
 interface SelectionTooltipProps {
   children: React.ReactNode;
 }
+
 export const SelectionTooltip = ({ children }: SelectionTooltipProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const lastSelectionRef = useRef<Range | null>(null);
+  const viewportRef = usePDF((state) => state.viewportRef);
 
   const { refs, floatingStyles, context } = useFloating({
     placement: "bottom",
@@ -23,52 +26,68 @@ export const SelectionTooltip = ({ children }: SelectionTooltipProps) => {
   const dismiss = useDismiss(context);
   const { getFloatingProps } = useInteractions([dismiss]);
 
+  // Function to update tooltip position based on selection
+  const updateTooltipPosition = () => {
+    const selection = document.getSelection();
+
+    if (!selection || selection.isCollapsed) {
+      setIsOpen(false);
+      lastSelectionRef.current = null;
+      return;
+    }
+
+    const range = selection.getRangeAt(0);
+    if (!range) return;
+
+    lastSelectionRef.current = range;
+    refs.setReference({
+      getBoundingClientRect: () => range.getBoundingClientRect(),
+      getClientRects: () => range.getClientRects(),
+    });
+    setIsOpen(true);
+  };
+
   useEffect(() => {
-    function handleMouseUp(event: MouseEvent) {
-      if (refs.floating.current?.contains(event.target as Element | null)) {
-        return;
-      }
+    const handleSelectionChange = () => {
+      // Use requestAnimationFrame to avoid rapid updates
+      requestAnimationFrame(updateTooltipPosition);
+    };
 
-      setTimeout(() => {
-        const selection = window.getSelection();
-        const range =
-          typeof selection?.rangeCount === "number" && selection.rangeCount > 0
-            ? selection.getRangeAt(0)
-            : null;
+    // Handle scroll events in the viewport
+    const handleScroll = () => {
+      if (!isOpen || !lastSelectionRef.current) return;
+      requestAnimationFrame(updateTooltipPosition);
+    };
 
-        if (selection?.isCollapsed) {
-          setIsOpen(false);
-          return;
-        }
+    // Add selection change listener
+    document.addEventListener("selectionchange", handleSelectionChange);
 
-        if (range) {
-          refs.setReference({
-            getBoundingClientRect: () => range.getBoundingClientRect(),
-            getClientRects: () => range.getClientRects(),
-          });
-          setIsOpen(true);
-        }
+    // Add scroll listener to viewport if it exists
+    if (viewportRef.current) {
+      viewportRef.current.addEventListener("scroll", handleScroll, {
+        passive: true,
       });
     }
 
-    function handleMouseDown(event: MouseEvent) {
-      if (refs.floating.current?.contains(event.target as Element | null)) {
-        return;
-      }
-
-      if (window.getSelection()?.isCollapsed) {
-        setIsOpen(false);
-      }
-    }
-
-    window.addEventListener("mouseup", handleMouseUp);
-    window.addEventListener("mousedown", handleMouseDown);
-
     return () => {
-      window.removeEventListener("mouseup", handleMouseUp);
-      window.removeEventListener("mousedown", handleMouseDown);
+      document.removeEventListener("selectionchange", handleSelectionChange);
+      if (viewportRef.current) {
+        viewportRef.current.removeEventListener("scroll", handleScroll);
+      }
     };
-  }, [refs]);
+  }, [refs, isOpen, viewportRef]);
+
+  // Handle clicks on the floating tooltip
+  useEffect(() => {
+    const handleFloatingClick = (e: MouseEvent) => {
+      if (refs.floating.current?.contains(e.target as Node)) {
+        e.stopPropagation();
+      }
+    };
+
+    document.addEventListener("click", handleFloatingClick);
+    return () => document.removeEventListener("click", handleFloatingClick);
+  }, [refs.floating]);
 
   return (
     <>

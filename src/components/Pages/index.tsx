@@ -14,8 +14,6 @@ import { useScrollFn } from "./useScrollFn";
 import { useObserveElement } from "./useObserveElement";
 import { useVirtualizer, VirtualItem } from "@tanstack/react-virtual";
 import { useFitWidth } from "./useFitWidth";
-import useVirtualizerVelocity from "./useVirtualizerVelocity";
-import { useVisiblePage } from "./useVisiblePage";
 
 const VIRTUAL_ITEM_GAP = 10;
 const DEFAULT_HEIGHT = 600;
@@ -23,7 +21,7 @@ const EXTRA_HEIGHT = 0;
 
 export const Pages = ({
   children,
-  virtualizerOptions = { overscan: 3 },
+  virtualizerOptions = { overscan: 5 },
   ...props
 }: HTMLProps<HTMLDivElement> & {
   virtualizerOptions?: {
