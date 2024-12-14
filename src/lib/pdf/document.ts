@@ -1,25 +1,12 @@
 import {
   getDocument,
-  GlobalWorkerOptions,
   OnProgressParameters,
-  PageViewport,
   PDFDocumentProxy,
   PDFPageProxy,
 } from "pdfjs-dist";
-// @ts-expect-error Vite Worker
-import PDFWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url&inline";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { InitialPDFState } from "../internal";
 
-/**
- * General setup for pdf.js
- */
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-GlobalWorkerOptions.workerSrc = PDFWorker;
-
-/**
- * Load a document
- */
 export interface usePDFDocumentParams {
   /**
    * The URL of the PDF file to load.

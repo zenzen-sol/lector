@@ -26,12 +26,17 @@ import { Search } from "@/components/Search";
 import { usePDF } from "@/lib/internal";
 import { CustomSelection } from "@/components/Highlight/CustomSelection";
 import { CustomSelectionTrigger } from "@/components/Highlight/CustomSelectionTrigger";
+// @ts-expect-error Vite Worker
+import PDFWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url&inline";
+import { GlobalWorkerOptions } from "pdfjs-dist";
 
 const meta: Meta<typeof Root> = {
   title: "Viewer",
   component: Root,
 };
 export default meta;
+
+GlobalWorkerOptions.workerSrc = PDFWorker;
 
 type Story = StoryObj<typeof Root>;
 
