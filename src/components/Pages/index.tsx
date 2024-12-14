@@ -105,6 +105,9 @@ export const Pages = ({
   // const shouldRender = !isScrollingFast;
 
   useFitWidth({ viewportRef: containerRef });
+  const largestPageWidth = usePDF((state) =>
+    Math.max(...state.viewports.map((v) => v.width)),
+  );
 
   return (
     <Primitive.div
@@ -134,7 +137,8 @@ export const Pages = ({
             alignItems: "center",
             flexDirection: "column",
             transformOrigin: "0 0",
-            width: "max-content",
+            // width: "max-content",
+            width: largestPageWidth,
             margin: "0 auto",
           }}
         >

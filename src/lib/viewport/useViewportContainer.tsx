@@ -32,11 +32,6 @@ export const useViewportContainer = ({
     viewportRef.current = containerRef.current;
   }, [containerRef.current]);
 
-  const initialWidth = useRef<{
-    width: number;
-    fullyInitialized: boolean;
-  } | null>(null);
-
   const transformations = useRef<{
     translateX: number;
     translateY: number;
@@ -64,10 +59,6 @@ export const useViewportContainer = ({
       const elementBoundingBox = elementRef.current.getBoundingClientRect();
 
       let width = elementBoundingBox.width;
-      if (!initialWidth.current && elementBoundingBox.width > 0) {
-        width = elementBoundingBox.width * zoom;
-        initialWidth.current = { fullyInitialized: false, width };
-      }
 
       elementWrapperRef.current.style.width = `${width}px`;
       elementWrapperRef.current.style.height = `${elementBoundingBox.height}px`;
@@ -95,40 +86,6 @@ export const useViewportContainer = ({
 
     updateTransform();
   }, [zoom]);
-
-  useEffect(() => {
-    if (!elementRef.current || !elementWrapperRef.current) {
-      return;
-    }
-
-    const callback = (entries: ResizeObserverEntry[]) => {
-      if (!elementRef.current || !elementWrapperRef.current) {
-        return;
-      }
-
-      const elementBoundingBox = entries[0];
-
-      let width = elementBoundingBox.contentRect.width;
-      if (
-        !initialWidth.current?.fullyInitialized &&
-        initialWidth.current?.width
-      ) {
-        width = initialWidth.current.width;
-        initialWidth.current.fullyInitialized = true;
-      }
-
-      elementWrapperRef.current.style.width = `${width}px`;
-      elementWrapperRef.current.style.height = `${elementBoundingBox.contentRect.height}px`;
-    };
-
-    const resizeObserver = new ResizeObserver(callback);
-
-    resizeObserver.observe(elementRef.current);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [elementRef.current, elementWrapperRef.current]);
 
   useLayoutEffect(() => {
     updateTransform();
