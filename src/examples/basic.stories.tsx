@@ -330,7 +330,7 @@ export const WithThumbnails: Story = {
     );
   },
   args: {
-    fileURL: "large.pdf",
+    fileURL: "expensive.pdf",
   },
 };
 

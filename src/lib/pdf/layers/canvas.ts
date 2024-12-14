@@ -15,10 +15,12 @@ export const useCanvasLayer = () => {
   const pdfPageProxy = usePDF((state) => state.getPdfPageProxy(pageNumber));
 
   const zoom = useDebounce(bouncyZoom, 100);
-  // const debouncedVisible = useDebounce(visible, 100);
+
+  const { visible } = useVisibility({ elementRef: canvasRef });
+  const debouncedVisible = useDebounce(visible, 100);
 
   useLayoutEffect(() => {
-    if (!canvasRef.current) {
+    if (!canvasRef.current || !debouncedVisible) {
       return;
     }
 
@@ -54,7 +56,7 @@ export const useCanvasLayer = () => {
     return () => {
       void renderingTask.cancel();
     };
-  }, [pdfPageProxy, canvasRef.current, dpr, zoom]);
+  }, [pdfPageProxy, canvasRef.current, dpr, zoom, debouncedVisible]);
 
   return {
     canvasRef,

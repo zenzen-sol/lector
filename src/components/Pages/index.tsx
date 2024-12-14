@@ -100,7 +100,7 @@ export const Pages = ({
   //   virtualizer,
   // });
 
-  // const isScrollingFast = Math.abs(normalizedVelocity) > 1;
+  // const isScrollingFast = Math.abs(normalizedVelocity) > 1.5;
   // const shouldRender = !isScrollingFast;
 
   useVisiblePage({
