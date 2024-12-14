@@ -23,7 +23,7 @@ const EXTRA_HEIGHT = 0;
 
 export const Pages = ({
   children,
-  virtualizerOptions = { overscan: 5 },
+  virtualizerOptions = { overscan: 3 },
   ...props
 }: HTMLProps<HTMLDivElement> & {
   virtualizerOptions?: {
