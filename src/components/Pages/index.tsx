@@ -14,6 +14,7 @@ import { useScrollFn } from "./useScrollFn";
 import { useObserveElement } from "./useObserveElement";
 import { useVirtualizer, VirtualItem } from "@tanstack/react-virtual";
 import { useFitWidth } from "./useFitWidth";
+import { useVisiblePage } from "./useVisiblePage";
 
 const VIRTUAL_ITEM_GAP = 10;
 const DEFAULT_HEIGHT = 600;
@@ -97,12 +98,13 @@ export const Pages = ({
   // const { normalizedVelocity } = useVirtualizerVelocity({
   //   virtualizer,
   // });
-  // useVisiblePage({
-  //   items: virtualizerItems,
-  // });
 
   // const isScrollingFast = Math.abs(normalizedVelocity) > 1;
   // const shouldRender = !isScrollingFast;
+
+  useVisiblePage({
+    items,
+  });
 
   useFitWidth({ viewportRef: containerRef });
   const largestPageWidth = usePDF((state) =>
