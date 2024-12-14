@@ -15,6 +15,7 @@ import { useObserveElement } from "./useObserveElement";
 import { useVirtualizer, VirtualItem } from "@tanstack/react-virtual";
 import { useFitWidth } from "./useFitWidth";
 import { useVisiblePage } from "./useVisiblePage";
+import useVirtualizerVelocity from "./useVirtualizerVelocity";
 
 const VIRTUAL_ITEM_GAP = 10;
 const DEFAULT_HEIGHT = 600;

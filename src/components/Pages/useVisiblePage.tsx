@@ -54,7 +54,6 @@ export const useVisiblePage = ({ items }: UseVisiblePageProps) => {
     [scrollElement, zoomLevel],
   );
 
-  console.log(items, isPinching, calculateVisiblePageIndex, setCurrentPage);
   useEffect(() => {
     if (!isPinching && items.length > 0) {
       const mostVisibleIndex = calculateVisiblePageIndex(items);

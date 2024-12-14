@@ -2,8 +2,13 @@ import { elementScroll, VirtualizerOptions } from "@tanstack/react-virtual";
 import { useCallback, useRef } from "react";
 import { PDFStore, usePDF } from "@/lib/internal";
 
-const easeOutQuint = (t: number) => {
-  return 1 - Math.pow(1 - t, 5);
+const easeInOutSmooth = (t: number): number => {
+  t *= 2;
+  if (t < 1) {
+    return 0.5 * t * t * t;
+  }
+  t -= 2;
+  return 0.5 * (t * t * t + 2);
 };
 
 export const useScrollFn = () => {
@@ -13,7 +18,7 @@ export const useScrollFn = () => {
 
   const scrollToFn: VirtualizerOptions<any, any>["scrollToFn"] = useCallback(
     (_offset, canSmooth, instance) => {
-      const duration = 400;
+      const duration = 200;
       const start = viewportRef?.current?.scrollTop || 0;
       const startTime = (scrollingRef.current = Date.now());
 
@@ -32,7 +37,7 @@ export const useScrollFn = () => {
         if (scrollingRef.current !== startTime) return;
         const now = Date.now();
         const elapsed = now - startTime;
-        const progress = easeOutQuint(Math.min(elapsed / duration, 1));
+        const progress = easeInOutSmooth(Math.min(elapsed / duration, 1));
         const interpolated = start + (offset - start) * progress;
 
         if (elapsed < duration) {
