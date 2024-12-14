@@ -49,21 +49,24 @@ export const usePDFDocumentContext = ({
       setProgress(progressEvent.loaded / progressEvent.total);
     };
 
-    loadingTask.promise.then(
-      (proxy) => {
+    const loadingPromise = loadingTask.promise
+      .then((proxy) => {
         onDocumentLoad?.({ proxy, documentUrl: fileURL });
         setProgress(1);
 
         generateViewports(proxy);
-      },
-      (error) => {
+      })
+      .catch((error) => {
+        if (loadingTask.destroyed) {
+          return;
+        }
         // eslint-disable-next-line no-console
         console.error("Error loading PDF document", error);
-      },
-    );
+      });
 
     return () => {
-      void loadingTask.destroy();
+      // void loadingTask.destroy();
+      loadingPromise.finally(() => loadingTask.destroy());
     };
   }, [fileURL]);
 
