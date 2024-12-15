@@ -1,4 +1,4 @@
-import { HighlightArea, HighlightRect, PDFStore } from "@/lib/internal";
+import { HighlightRect, PDFStore } from "@/lib/internal";
 
 const MERGE_THRESHOLD = 5; // Increased threshold for more aggressive merging
 
@@ -78,7 +78,7 @@ export const useSelectionDimensions = () => {
     if (!selection || selection.isCollapsed) return;
 
     const range = selection.getRangeAt(0);
-    const highlights: HighlightArea[] = [];
+    const highlights: HighlightRect[] = [];
     const textLayerMap = new Map<number, HighlightRect[]>();
 
     // Get valid client rects and filter out tiny ones
@@ -118,10 +118,7 @@ export const useSelectionDimensions = () => {
 
     textLayerMap.forEach((rects, pageNumber) => {
       if (rects.length > 0) {
-        highlights.push({
-          pageNumber,
-          rects: consolidateRects(rects),
-        });
+        highlights.push(...consolidateRects(rects));
       }
     });
 

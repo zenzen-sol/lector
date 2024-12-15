@@ -19,10 +19,6 @@ export type HighlightRect = {
   width: number;
 };
 
-export type HighlightArea = {
-  pageNumber: number;
-  rects: HighlightRect[];
-};
 interface PDFState {
   pdfDocumentProxy: PDFDocumentProxy;
 
@@ -57,13 +53,13 @@ interface PDFState {
   virtualizer: PDFVirtualizer | null;
   setVirtualizer: (virtualizer: PDFVirtualizer) => void;
 
-  highlights: HighlightArea[];
-  setHighlight: (higlights: HighlightArea[]) => void;
+  highlights: HighlightRect[];
+  setHighlight: (higlights: HighlightRect[]) => void;
 
   getPdfPageProxy: (pageNumber: number) => PDFPageProxy;
 
-  customSelectionRects: HighlightArea[];
-  setCustomSelectionRects: (rects: HighlightArea[]) => void;
+  customSelectionRects: HighlightRect[];
+  setCustomSelectionRects: (rects: HighlightRect[]) => void;
 }
 
 export type PDFVirtualizer = Virtualizer<any, any>;

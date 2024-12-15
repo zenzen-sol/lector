@@ -1,4 +1,4 @@
-import { HighlightArea, usePDF } from "@/lib/internal";
+import { usePDF } from "@/lib/internal";
 import { usePDFPageNumber } from "@/lib/pdf/page";
 import { Slot } from "@radix-ui/react-slot";
 import { ComponentPropsWithoutRef, ElementRef, forwardRef } from "react";
@@ -16,13 +16,13 @@ export const HighlightLayer = forwardRef<
 
   const Comp = asChild ? Slot : "div";
 
-  const area = highlights.find((area) => area.pageNumber === pageNumber);
+  const rects = highlights.filter((area) => area.pageNumber === pageNumber);
 
-  if (!area || !area.rects.length) return null;
+  if (!rects?.length) return null;
 
   return (
     <>
-      {area.rects.map((rect, index) => (
+      {rects.map((rect, index) => (
         <Comp
           ref={ref}
           key={`highlight-${pageNumber}-${index}`}

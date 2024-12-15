@@ -199,13 +199,13 @@ export const WithSearchControl: Story = {
     return (
       <Root
         fileURL={fileURL}
-        className="flex bg-gray-50"
+        className="flex bg-gray-50 h-[500px]"
         loader={<div className="p-4">Loading...</div>}
       >
         <Search>
           <SearchUI />
         </Search>
-        <Pages className="p-4 h-full">
+        <Pages className="p-4 ">
           <Page>
             <CanvasLayer />
             <TextLayer />

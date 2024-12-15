@@ -10,7 +10,7 @@ interface ResultItemProps {
 }
 
 const ResultItem = ({ result }: ResultItemProps) => {
-  const { jumpToHighlightArea } = usePDFJump();
+  const { jumpToHighlightRects } = usePDFJump();
   const getPdfPageProxy = usePDF((state) => state.getPdfPageProxy);
 
   const onClick = async () => {
@@ -22,10 +22,7 @@ const ResultItem = ({ result }: ResultItemProps) => {
       matchIndex: result.matchIndex,
     });
 
-    jumpToHighlightArea({
-      pageNumber: result.pageNumber,
-      rects,
-    });
+    jumpToHighlightRects(rects, "pixels");
   };
 
   return (

@@ -15,15 +15,15 @@ export const CustomSelection = ({
 
   const pageNumber = usePDFPageNumber();
 
-  const area = customSelectionRects.find(
+  const rects = customSelectionRects.filter(
     (area) => area.pageNumber === pageNumber,
   );
 
-  if (!area || !area.rects.length) return null;
+  if (!rects.length) return null;
 
   return (
     <>
-      {area.rects.map((rect, index) => (
+      {rects.map((rect, index) => (
         <span
           key={index}
           style={{
@@ -39,7 +39,7 @@ export const CustomSelection = ({
           }}
         />
       ))}
-      {area.rects.map((rect, index) => (
+      {rects.map((rect, index) => (
         <span
           key={`bg-${index}`}
           style={{

@@ -1,4 +1,4 @@
-import { HighlightArea, usePDF } from "./internal";
+import { HighlightRect, usePDF } from "./internal";
 
 export const usePDFJump = () => {
   const virtualizer = usePDF((state) => state.virtualizer);
@@ -33,25 +33,47 @@ export const usePDFJump = () => {
     });
   };
 
-  const jumpToHighlightArea = (area: HighlightArea) => {
+  const jumpToHighlightRects = (
+    rects: HighlightRect[],
+    type: "pixels" | "percent",
+  ) => {
     if (!virtualizer) return;
 
-    setHighlight([area]);
+    setHighlight(rects);
+    const firstPage = Math.min(...rects.map((rect) => rect.pageNumber));
 
     // Get the start offset of the page in the viewport
-    const pageOffset = virtualizer.getOffsetForIndex(area.pageNumber - 1);
+    const pageOffset = virtualizer.getOffsetForIndex(firstPage - 1, "start");
+
     if (pageOffset === null) return;
 
     // Find the target highlight rect (usually the first one)
-    const targetRect = area.rects[0];
+    const targetRect = rects.find((rect) => rect.pageNumber === firstPage);
 
+    if (!targetRect) return;
     // Calculate absolute scroll position:
     // Page offset + highlight's position within the page
     const isNumber = pageOffset?.[0] != null;
 
     if (!isNumber) return;
 
-    const scrollOffset = (pageOffset[0] ?? 0) + targetRect.top;
+    let scrollOffset: number;
+
+    if (type === "percent") {
+      // Get the page dimensions
+      const estimatePageHeight = virtualizer.options.estimateSize(
+        firstPage - 1,
+      );
+
+      // Convert percentage to pixels based on page height
+      const topInPixels = (targetRect.top / 100) * estimatePageHeight;
+      scrollOffset = (pageOffset[0] ?? 0) + topInPixels;
+    } else {
+      // Original pixel-based calculation
+      scrollOffset = (pageOffset[0] ?? 0) + targetRect.top;
+    }
+
+    console.log(scrollOffset);
 
     // Adjust for padding
     const adjustedOffset = Math.max(0, scrollOffset);
@@ -62,5 +84,5 @@ export const usePDFJump = () => {
     });
   };
 
-  return { jumpToPage, jumpToOffset, jumpToHighlightArea };
+  return { jumpToPage, jumpToOffset, jumpToHighlightRects };
 };
