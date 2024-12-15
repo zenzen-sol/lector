@@ -1,5 +1,5 @@
 {
-  "name": "@unriddle-ai/pdf-viewer",
+  "name": "pdf-viewer-monorepo",
   "version": "0.0.0",
   "description": "Headless PDF viewer for React",
   "author": "andrewdr (https://github.com/andrewdoro)",

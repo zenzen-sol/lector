@@ -1,29 +1,38 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "target": "esnext",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    // Type checking
     "strict": true,
-    "noStrictGenericChecks": false,
+    "noUncheckedIndexedAccess": true,
+    "alwaysStrict": false, // Don't emit "use strict" to avoid conflicts with "use client"
+    // Modules
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    // Language & Environment
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "types": ["node"],
+    // Emit
+    "noEmit": true,
+    "declaration": true,
+    "declarationMap": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+
+    "downlevelIteration": true,
+    // Interop
+    "allowJs": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    // Misc
     "skipLibCheck": true,
-    "jsx": "preserve",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    },
-    "outDir": "./dist",
-    "sourceMap": true,
-    "inlineSources": true,
-    "sourceRoot": "/"
+    "skipDefaultLibCheck": true,
+    "incremental": true,
+    "tsBuildInfoFile": ".tsbuildinfo"
   },
-  "include": [
-    "src/**/*",
-    "vite.config.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
 }

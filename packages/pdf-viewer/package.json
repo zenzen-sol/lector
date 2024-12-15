@@ -4,44 +4,37 @@
   "description": "Headless PDF viewer for React",
   "author": "andrewdr (https://github.com/andrewdoro)",
   "license": "MIT",
-  "main": "dist/pdf-viewer.cjs",
-  "types": "dist/src/index.d.ts",
   "type": "module",
+  "sideEffects": false,
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/pdf-viewer.js",
-      "require": "./dist/pdf-viewer.cjs",
-      "types": "./dist/src/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./esm-only.cjs"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "test": "test-storybook",
-    "build": "vite build && tsc --emitDeclarationOnly --declaration && tsc-alias",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "test:browser": "vitest --workspace=vitest.workspace.ts"
+    "dev": "tsup --watch",
+    "prebuild": "rm -rf dist",
+    "build": "tsup",
+    "postbuild": "size-limit --json > size.json",
+    "test": "pnpm run '/^test:/'",
+    "test:unit": "vitest run",
+    "test:size": "size-limit",
+    "prepack": "./scripts/prepack.sh"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^1.6.1",
     "@eslint/js": "^9.6.0",
-    "@storybook/addon-docs": "^8.2.6",
-    "@storybook/addon-essentials": "^8.2.3",
-    "@storybook/addon-interactions": "^8.2.3",
-    "@storybook/addon-links": "^8.2.3",
-    "@storybook/addon-storysource": "^8.2.6",
-    "@storybook/blocks": "^8.2.3",
-    "@storybook/manager-api": "^8.2.6",
-    "@storybook/react": "^8.2.3",
-    "@storybook/react-vite": "^8.2.3",
-    "@storybook/test": "^8.2.3",
-    "@storybook/test-runner": "^0.19.1",
-    "@storybook/theming": "^8.2.6",
     "@testing-library/react": "^16.0.0",
     "@types/eslint__js": "^8.42.3",
-    "@uidotdev/usehooks": "^2.4.1",
+    "@types/node": "^22.9.0",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
     "@use-gesture/react": "^10.3.1",
     "@vitejs/plugin-react": "^4.3.1",
     "@vitest/browser": "^2.0.4",
@@ -52,7 +45,6 @@
     "playwright": "^1.45.3",
     "prettier": "^3.3.2",
     "react": "^18.3.1",
-    "storybook": "^8.2.3",
     "tsc-alias": "^1.8.10",
     "tslib": "^2.6.3",
     "typescript": "^5.5.3",
@@ -67,8 +59,13 @@
   },
   "dependencies": {
     "@floating-ui/react": "^0.26.28",
+    "@microsoft/api-extractor": "^7.48.1",
     "@radix-ui/react-slot": "^1.1.0",
+    "@size-limit/preset-small-lib": "^11.1.6",
     "@tanstack/react-virtual": "^3.10.9",
+    "size-limit": "^11.1.6",
+    "tsup": "^8.3.5",
+    "use-debounce": "^10.0.4",
     "zustand": "^5.0.2"
   },
   "optionalDependencies": {
@@ -90,5 +87,15 @@
   "bugs": {
     "url": "https://github.com/unriddle-ai/pdf-viewer/issues"
   },
-  "homepage": "https://github.com/unriddle-ai/pdf-viewer"
+  "homepage": "https://github.com/unriddle-ai/pdf-viewer",
+  "size-limit": [
+    {
+      "name": "Client",
+      "path": "dist/index.js",
+      "limit": "150 kB",
+      "ignore": [
+        "react"
+      ]
+    }
+  ]
 }

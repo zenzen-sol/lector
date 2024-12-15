@@ -1,4 +1,4 @@
-import { HighlightRect, PDFStore } from "@/lib/internal";
+import { PDFStore, type HighlightRect } from "../internal";
 
 const MERGE_THRESHOLD = 5; // Increased threshold for more aggressive merging
 
