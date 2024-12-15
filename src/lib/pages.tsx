@@ -73,8 +73,6 @@ export const usePDFJump = () => {
       scrollOffset = (pageOffset[0] ?? 0) + targetRect.top;
     }
 
-    console.log(scrollOffset);
-
     // Adjust for padding
     const adjustedOffset = Math.max(0, scrollOffset);
 
