@@ -17,6 +17,7 @@ export type HighlightRect = {
   left: number;
   height: number;
   width: number;
+  type?: "pixels" | "percent";
 };
 
 interface PDFState {

@@ -1,4 +1,4 @@
-import { usePDF } from "@/lib/internal";
+import { HighlightRect, usePDF } from "@/lib/internal";
 import { usePDFPageNumber } from "@/lib/pdf/page";
 import { Slot } from "@radix-ui/react-slot";
 import { ComponentPropsWithoutRef, ElementRef, forwardRef } from "react";
@@ -7,6 +7,21 @@ interface HighlightLayerProps extends ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
 }
 
+const convertToPercentString = (rect: Omit<HighlightRect, "pageNumber">) => {
+  return {
+    top: `${rect.top}%`,
+    left: `${rect.left}%`,
+    height: `${rect.height}%`,
+    width: `${rect.width}%`,
+  };
+};
+
+type Dimensions = {
+  top: string | number;
+  left: string | number;
+  height: string | number;
+  width: string | number;
+};
 export const HighlightLayer = forwardRef<
   ElementRef<"div">,
   HighlightLayerProps
@@ -22,26 +37,32 @@ export const HighlightLayer = forwardRef<
 
   return (
     <>
-      {rects.map((rect, index) => (
-        <Comp
-          ref={ref}
-          key={`highlight-${pageNumber}-${index}`}
-          className={className}
-          style={{
-            position: "absolute",
-            top: rect.top,
-            left: rect.left,
-            height: rect.height,
-            width: rect.width,
-            pointerEvents: "none",
-            zIndex: 30,
-            ...style,
-          }}
-          {...props}
-        >
-          {props.children}
-        </Comp>
-      ))}
+      {rects.map((rect, index) => {
+        const { pageNumber, type, ...coordinates } = rect;
+
+        let dimensions: Dimensions = coordinates;
+        if (type === "percent") {
+          dimensions = convertToPercentString(rect);
+        }
+
+        return (
+          <Comp
+            ref={ref}
+            key={`highlight-${pageNumber}-${index}`}
+            className={className}
+            style={{
+              position: "absolute",
+              ...dimensions,
+              pointerEvents: "none",
+              zIndex: 30,
+              ...style,
+            }}
+            {...props}
+          >
+            {props.children}
+          </Comp>
+        );
+      })}
     </>
   );
 });
