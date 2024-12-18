@@ -1,12 +1,83 @@
-name: Build and Publish
+name: CI/CD
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:
+
+env:
+  FORCE_COLOR: 3
 
 jobs:
-  build-and-publish:
+  lint:
+    name: Linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          registry-url: "https://registry.npmjs.org"
+          cache-dependency-path: ./pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install
+
+  test:
+    name: Testing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          registry-url: "https://registry.npmjs.org"
+          cache-dependency-path: ./pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Build package
+        run: pnpm build
+
+  publish:
+    name: Publish
+    needs: [lint, test]
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -23,8 +94,7 @@ jobs:
         with:
           token: ${{ steps.app-token.outputs.token }}
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
 
@@ -35,31 +105,34 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           cache-dependency-path: ./pnpm-lock.yaml
 
-      - run: pnpm install
-        working-directory: .
-      - run: pnpm run build
-        working-directory: .
-      #- run: npm test
-      #  working-directory: .
-      - run: git config --global user.email "support@unriddle.com"
-      - run: git config --global user.name "github-actions[bot]"
-      - run: |
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build package
+        run: pnpm build
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "support@unriddle.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Version and Tag
+        id: version
+        run: |
           tag=$(npm version patch -m 'Bump version to %s [skip ci]')
           tag_without_v=${tag#v}
           echo "tag=$tag_without_v" >> "$GITHUB_OUTPUT"
-        id: version
-        working-directory: .
-      - uses: ncipollo/release-action@v1
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.version.outputs.tag }}
           body: "Release ${{ steps.version.outputs.tag }}. Check it out on [NPM ➡️](https://www.npmjs.com/package/@unriddle-ai/pdf-viewer/v/${{ steps.version.outputs.tag }})."
-      - run: pnpm publish --access public
-        working-directory: .
+
+      - name: Publish to NPM
+        run: pnpm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      #- uses: stefanzweifel/git-auto-commit-action@v5
-      #  with:
-      #    commit_options: "--dry-run --no-verify"
-      #    #commit_message: "Bump version [skip ci]"
-      #    skip_dirty_check: true
-      - run: git push origin
+
+      - name: Push changes
+        run: git push origin

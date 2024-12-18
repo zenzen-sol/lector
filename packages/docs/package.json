@@ -9,7 +9,7 @@
     "postinstall": "fumadocs-mdx"
   },
   "dependencies": {
-    "@unriddle-ai/pdf-viewer": "workspace:*",
+    "@unriddle-ai/lector": "workspace:*",
     "fumadocs-core": "14.6.1",
     "fumadocs-mdx": "11.1.2",
     "fumadocs-ui": "14.6.1",

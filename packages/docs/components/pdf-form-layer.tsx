@@ -23,6 +23,8 @@ const PdfFormLayer = () => {
     <form
       onSubmit={(e) => {
         e.preventDefault();
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const formData = new FormData(e.target as any);
         const values = Object.fromEntries(formData.entries());
 

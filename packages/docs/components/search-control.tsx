@@ -2,15 +2,12 @@
 
 import {
   CanvasLayer,
-  CurrentZoom,
   HighlightLayer,
   Page,
   Pages,
   Root,
   Search,
   TextLayer,
-  ZoomIn,
-  ZoomOut,
 } from "@unriddle-ai/pdf-viewer";
 import { GlobalWorkerOptions } from "pdfjs-dist";
 
