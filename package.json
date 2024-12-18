@@ -9,6 +9,7 @@
     "build": "turbo run build ",
     "lint": "turbo run lint",
     "format": "turbo run format",
+    "prepare": "husky",
     "test": "turbo run test",
     "dev": "turbo run dev"
   },
@@ -36,6 +37,7 @@
   "homepage": "https://github.com/unriddle-ai/pdf-viewer",
   "packageManager": "pnpm@9.5.0",
   "dependencies": {
+    "husky": "^9.1.7",
     "semantic-release": "^24.2.0"
   },
   "commitlint": {
