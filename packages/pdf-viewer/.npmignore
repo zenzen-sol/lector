@@ -4,5 +4,3 @@ static
 *.png
 
 .github
-.storybook
-storybook-static

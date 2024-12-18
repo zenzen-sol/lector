@@ -1,7 +1,7 @@
-import { PDFPageProxy } from "pdfjs-dist";
-import { TextItem } from "pdfjs-dist/types/src/display/api";
-import { SearchResult } from "./useSearch";
-import { HighlightRect } from "@/lib/internal";
+import type { PDFPageProxy } from "pdfjs-dist";
+import type { TextItem } from "pdfjs-dist/types/src/display/api";
+import type { SearchResult } from "./useSearch";
+import type { HighlightRect } from "../../internal";
 
 interface TextPosition {
   pageNumber: number;
@@ -25,6 +25,9 @@ export async function calculateHighlightRects(
 
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
+
+    if (!item) continue;
+
     const itemLength = item.str.length;
 
     // Check if we've found the start of our match
@@ -90,8 +93,12 @@ function mergeAdjacentRects(rects: HighlightRect[]): HighlightRect[] {
   const merged: HighlightRect[] = [];
   let current = rects[0];
 
+  if (!current) return rects;
+
   for (let i = 1; i < rects.length; i++) {
     const next = rects[i];
+
+    if (!next) continue;
     // If rects are on the same line (approximately same y position)
     if (
       Math.abs(current.top - next.top) < 2 &&

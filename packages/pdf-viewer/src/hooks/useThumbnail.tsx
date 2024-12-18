@@ -1,81 +1,99 @@
 import { useEffect, useRef } from "react";
 import { usePdf } from "../internal";
 import { useDPR } from "./viewport/useDPR";
-import { cancellable } from "../lib/cancellable";
 import { useVisibility } from "./useVisibility";
 import { useDebounce } from "use-debounce";
+import type { RenderTask } from "pdfjs-dist";
+
+interface ThumbnailConfig {
+  maxHeight?: number;
+  maxWidth?: number;
+  isFirstPage?: boolean;
+}
+
+const DEFAULT_CONFIG: Required<Omit<ThumbnailConfig, "isFirstPage">> = {
+  maxHeight: 800,
+  maxWidth: 400,
+};
 
 export const useThumbnail = (
   pageNumber: number,
-
-  isFirstPage = false,
+  config: ThumbnailConfig = {},
 ) => {
-  const pageProxy = usePdf((state) => state.getPdfPageProxy(pageNumber));
+  const {
+    maxHeight = DEFAULT_CONFIG.maxHeight,
+    maxWidth = DEFAULT_CONFIG.maxWidth,
+    isFirstPage = false,
+  } = config;
 
-  const simpleRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const renderTaskRef = useRef<RenderTask | null>(null);
 
-  const { visible } = useVisibility({
-    elementRef: simpleRef,
-  });
-
+  const pageProxy = usePdf((state) => state.getPdfPageProxy(pageNumber));
+  const { visible } = useVisibility({ elementRef: containerRef });
   const [debouncedVisible] = useDebounce(visible, 50);
   const dpr = useDPR();
 
-  const { maxHeight, maxWidth } = Object.assign(
-    {
-      maxHeight: 800,
-      maxWidth: 400,
-    },
-    {},
-  );
-
-  const forcedVisible = isFirstPage ? true : debouncedVisible;
+  const isVisible = isFirstPage || debouncedVisible;
 
   useEffect(() => {
-    const { cancel } = cancellable(
-      (async () => {
-        //TODO: opitimize this for thumbnails add virtualization too
-        if (!canvasRef.current) {
-          return;
+    const renderThumbnail = async () => {
+      const canvas = canvasRef.current;
+
+      if (!canvas || !pageProxy) return;
+
+      try {
+        // Cancel any existing render task
+        if (renderTaskRef.current) {
+          renderTaskRef.current.cancel();
         }
 
-        const page = pageProxy;
-        const viewport = page.getViewport({ scale: 1 });
+        // Calculate viewport and scale
+        const viewport = pageProxy.getViewport({ scale: 1 });
+        const scale =
+          Math.min(maxWidth / viewport.width, maxHeight / viewport.height) *
+          (isVisible ? dpr : 0.5);
 
-        const smallestScale = Math.min(
-          maxWidth / viewport.width,
-          maxHeight / viewport.height,
-        );
+        const scaledViewport = pageProxy.getViewport({ scale });
 
-        const scale = smallestScale * (forcedVisible ? dpr : 0.5);
+        // Set canvas dimensions
+        canvas.width = scaledViewport.width;
+        canvas.height = scaledViewport.height;
 
-        const viewportScaled = page.getViewport({ scale });
+        // Create and store new render task
+        const context = canvas.getContext("2d");
+        if (!context) return;
 
-        const canvas = canvasRef.current;
-
-        if (!canvas) return;
-
-        canvas.width = viewportScaled.width;
-        canvas.height = viewportScaled.height;
-
-        const renderingTask = page.render({
-          canvasContext: canvasRef.current.getContext("2d")!,
-          viewport: viewportScaled,
+        const renderTask = pageProxy.render({
+          canvasContext: context,
+          viewport: scaledViewport,
         });
 
-        void renderingTask.promise;
-      })(),
-    );
+        renderTaskRef.current = renderTask;
+        await renderTask.promise;
+      } catch (error: unknown) {
+        if (
+          error instanceof Error &&
+          error.name === "RenderingCancelledException"
+        ) {
+          console.log("Rendering cancelled");
+        } else {
+          console.error("Failed to render PDF page:", error);
+        }
+      }
+    };
+
+    renderThumbnail();
 
     return () => {
-      cancel();
+      renderTaskRef.current?.cancel();
     };
-  }, [pageNumber, pageProxy, forcedVisible]);
+  }, [pageNumber, pageProxy, isVisible, dpr, maxHeight, maxWidth]);
 
   return {
     canvasRef,
-    simpleRef,
-    visible: forcedVisible,
+    containerRef,
+    isVisible,
   };
 };

@@ -20,4 +20,11 @@ export { AnnotationLayer } from "./components/layers/annotation-layer";
 export { CustomLayer } from "./components/layers/custom-layer";
 
 export { usePdf } from "./internal";
+export { usePdfJump } from "./hooks/pages/usePdfJump";
+export {
+  useSearch,
+  type SearchResult,
+  type SearchResults,
+} from "./hooks/search/useSearch";
+export { calculateHighlightRects } from "./hooks/search/useSearchPosition";
 export { LinkService } from "./hooks/usePDFLinkService";

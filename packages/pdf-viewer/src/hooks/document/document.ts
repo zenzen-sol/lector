@@ -4,7 +4,7 @@ import {
   type PDFDocumentProxy,
   type PDFPageProxy,
 } from "pdfjs-dist";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { InitialPDFState } from "../../internal";
 
 export interface usePDFDocumentParams {
@@ -35,39 +35,41 @@ export const usePDFDocumentContext = ({
   const [rotation, setRotation] = useState<number>(initialRotation);
 
   useEffect(() => {
-    setInitialState(null);
-    setProgress(0);
+    const loadDocumnent = () => {
+      setInitialState(null);
+      setProgress(0);
 
-    const loadingTask = getDocument(fileURL);
+      const loadingTask = getDocument(fileURL);
 
-    loadingTask.onProgress = (progressEvent: OnProgressParameters) => {
-      // Added to dedupe state updates when the file is fully loaded
-      if (progressEvent.loaded === progressEvent.total) {
-        return;
-      }
-
-      setProgress(progressEvent.loaded / progressEvent.total);
-    };
-
-    const loadingPromise = loadingTask.promise
-      .then((proxy) => {
-        onDocumentLoad?.({ proxy, documentUrl: fileURL });
-        setProgress(1);
-
-        generateViewports(proxy);
-      })
-      .catch((error) => {
-        if (loadingTask.destroyed) {
+      loadingTask.onProgress = (progressEvent: OnProgressParameters) => {
+        // Added to dedupe state updates when the file is fully loaded
+        if (progressEvent.loaded === progressEvent.total) {
           return;
         }
-        // eslint-disable-next-line no-console
-        console.error("Error loading PDF document", error);
-      });
 
-    return () => {
-      // void loadingTask.destroy();
-      loadingPromise.finally(() => loadingTask.destroy());
+        setProgress(progressEvent.loaded / progressEvent.total);
+      };
+
+      const loadingPromise = loadingTask.promise
+        .then((proxy) => {
+          onDocumentLoad?.({ proxy, documentUrl: fileURL });
+          setProgress(1);
+
+          generateViewports(proxy);
+        })
+        .catch((error) => {
+          if (loadingTask.destroyed) {
+            return;
+          }
+          // eslint-disable-next-line no-console
+          console.error("Error loading PDF document", error);
+        });
+
+      return () => {
+        loadingPromise.finally(() => loadingTask.destroy());
+      };
     };
+    loadDocumnent();
   }, [fileURL]);
 
   const generateViewports = async (pdf: PDFDocumentProxy) => {

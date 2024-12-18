@@ -7,7 +7,7 @@ import {
 } from "react";
 import { Primitive } from "./primitive";
 import { usePdf } from "../internal";
-import { usePDFJump } from "../hooks/pages/usePdfJump";
+import { usePdfJump } from "../hooks/pages/usePdfJump";
 import type { RefProxy } from "pdfjs-dist/types/src/display/api";
 import { usePDFOutline } from "../hooks/usePdfOutline";
 
@@ -40,7 +40,7 @@ export const OutlineItem: FunctionComponent<OutlineItemProps> = ({
   }
 
   const pdfDocumentProxy = usePdf((state) => state.pdfDocumentProxy);
-  const { jumpToPage } = usePDFJump();
+  const { jumpToPage } = usePdfJump();
 
   const getDestinationPage = async (
     dest: string | unknown[] | Promise<unknown[]>,

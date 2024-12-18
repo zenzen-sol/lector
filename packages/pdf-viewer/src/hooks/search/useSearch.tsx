@@ -1,5 +1,5 @@
-import { usePDF } from "@/lib/internal";
 import { useCallback, useEffect, useState } from "react";
+import { usePdf } from "../../internal";
 
 export interface SearchResult {
   pageNumber: number;
@@ -15,33 +15,36 @@ export interface SearchResults {
   hasMoreResults: boolean;
 }
 
-// Levenshtein distance calculation for fuzzy matching
 function levenshteinDistance(a: string, b: string): number {
-  const matrix: number[][] = [];
+  // Initialize with explicit type for better inference
+  const matrix = [] as number[][];
 
+  // Initialize first row (array)
   for (let i = 0; i <= b.length; i++) {
     matrix[i] = [i];
   }
 
+  // Initialize first column
   for (let j = 0; j <= a.length; j++) {
-    matrix[0][j] = j;
+    matrix[0]![j] = j; // Use non-null assertion since we know index 0 exists
   }
 
+  // Fill the matrix
   for (let i = 1; i <= b.length; i++) {
     for (let j = 1; j <= a.length; j++) {
       if (b.charAt(i - 1) === a.charAt(j - 1)) {
-        matrix[i][j] = matrix[i - 1][j - 1];
+        matrix[i]![j] = matrix[i - 1]![j - 1]!;
       } else {
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1,
-          matrix[i][j - 1] + 1,
-          matrix[i - 1][j] + 1,
+        matrix[i]![j] = Math.min(
+          matrix[i - 1]![j - 1]! + 1,
+          matrix[i]![j - 1]! + 1,
+          matrix[i - 1]![j]! + 1,
         );
       }
     }
   }
 
-  return matrix[b.length][a.length];
+  return matrix[b.length]![a.length]!;
 }
 
 interface SearchOptions {
@@ -51,7 +54,7 @@ interface SearchOptions {
 }
 
 export const useSearch = () => {
-  const textContent = usePDF((state) => state.textContent);
+  const textContent = usePdf((state) => state.textContent);
   const [keywords, setKeywords] = useState<string[]>([]);
   const [searchResults, setSearchResults] = useState<SearchResults>({
     exactMatches: [],

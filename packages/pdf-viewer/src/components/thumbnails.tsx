@@ -1,5 +1,5 @@
 import { cloneElement, type HTMLProps, type ReactElement } from "react";
-import { usePDFJump } from "../hooks/pages/usePdfJump";
+import { usePdfJump } from "../hooks/pages/usePdfJump";
 import { Primitive } from "./primitive";
 import { usePdf } from "../internal";
 import { useThumbnail } from "../hooks/useThumbnail";
@@ -8,15 +8,14 @@ export const Thumbnail = ({
   pageNumber = 1,
   ...props
 }: HTMLProps<HTMLCanvasElement> & { pageNumber?: number }) => {
-  const { canvasRef, simpleRef, visible } = useThumbnail(
-    pageNumber,
-    pageNumber < 5,
-  );
-  const { jumpToPage } = usePDFJump();
+  const { canvasRef, containerRef, isVisible } = useThumbnail(pageNumber, {
+    isFirstPage: pageNumber < 5,
+  });
+  const { jumpToPage } = usePdfJump();
 
   return (
-    <div ref={simpleRef} style={{ minHeight: "150px", minWidth: "10px" }}>
-      {visible && (
+    <div ref={containerRef} style={{ minHeight: "150px", minWidth: "10px" }}>
+      {isVisible && (
         <Primitive.canvas
           {...props}
           role="button"

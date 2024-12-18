@@ -1,6 +1,6 @@
 import { usePdf, type HighlightRect } from "../../internal";
 
-export const usePDFJump = () => {
+export const usePdfJump = () => {
   const virtualizer = usePdf((state) => state.virtualizer);
   const setHighlight = usePdf((state) => state.setHighlight);
 

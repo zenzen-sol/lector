@@ -3,8 +3,6 @@ title: Basic usage
 description: Replacing React.useState with useQueryState
 ---
 
-import { Basic } from "../../components/examples.tsx";
-
 <Callout title='Prerequisite'>
   Have you setup your app with the appropriate [**adapter**](./adapters)? Then you are all set!
 </Callout>
@@ -24,6 +22,14 @@ To get started, you will need to create a basic PDFReader component:
 
 ```jsx
 import { Root, Viewport, Pages, Page } from "@unriddle-ai/pdf-viewer";
+import { GlobalWorkerOptions } from "pdfjs-dist";
+
+import "pdfjs-dist/web/pdf_viewer.css";
+
+GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.mjs",
+  import.meta.url
+).toString();
 
 const MyPDFReader = () => (
   <Root fileURL='path/to/my.pdf'>
@@ -41,12 +47,6 @@ const MyPDFReader = () => (
 The examples below have been styled with `tailwindcss` but you could use any other CSS framework or style. Styles needed for the PDFReader components to work properly are included in the package.
 
 ## Examples
-
-### Basic
-
-The simplest PDF reader you can make. It still supports zooming in and out. If you need support text selection, annotations, or links, you will need to add more components.
-
-<Basic />
 
 ### Other examples
 
