@@ -118,7 +118,7 @@ jobs:
         run: pnpm install --ignore-scripts --frozen-lockfile --filter lector...
 
       - name: Build package
-        run: pnpm build --filter lector
+        run: pnpm build --filter @unriddle-ai/lector
 
       - name: Semantic Release
         run: ../../node_modules/.bin/semantic-release
