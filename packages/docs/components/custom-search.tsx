@@ -5,7 +5,7 @@ import {
   usePdf,
   usePdfJump,
   useSearch,
-} from "@unriddle-ai/pdf-viewer";
+} from "@unriddle-ai/lector";
 import { useEffect, useState } from "react";
 
 interface ResultItemProps {
@@ -96,6 +96,7 @@ export function SearchUI() {
 
   useEffect(() => {
     search(debouncedSearchText);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchText]);
 
   const handleSearch = (searchText: string) => {

@@ -22,6 +22,10 @@
     "dev": {
       "persistent": true,
       "cache": false
+    },
+    "@unriddle-ai/lector#test": {
+      "outputs": ["dist/**", "coverage/**"],
+      "dependsOn": ["build"]
     }
   }
 }

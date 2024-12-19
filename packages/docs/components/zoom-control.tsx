@@ -9,15 +9,9 @@ import {
   TextLayer,
   ZoomIn,
   ZoomOut,
-} from "@unriddle-ai/pdf-viewer";
-import { GlobalWorkerOptions } from "pdfjs-dist";
+} from "@unriddle-ai/lector";
 
-import "pdfjs-dist/web/pdf_viewer.css";
-
-GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.mjs",
-  import.meta.url
-).toString();
+import "@/lib/setup";
 
 const fileUrl = "/pdf/large.pdf";
 

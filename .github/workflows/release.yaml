@@ -127,7 +127,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.version.outputs.tag }}
-          body: "Release ${{ steps.version.outputs.tag }}. Check it out on [NPM ➡️](https://www.npmjs.com/package/@unriddle-ai/pdf-viewer/v/${{ steps.version.outputs.tag }})."
+          body: "Release ${{ steps.version.outputs.tag }}. Check it out on [NPM ➡️](https://www.npmjs.com/package/@unriddle-ai/lector/v/${{ steps.version.outputs.tag }})."
 
       - name: Publish to NPM
         run: pnpm publish --access public

@@ -8,16 +8,10 @@ import {
   Root,
   Search,
   TextLayer,
-} from "@unriddle-ai/pdf-viewer";
-import { GlobalWorkerOptions } from "pdfjs-dist";
+} from "@unriddle-ai/lector";
 
-import "pdfjs-dist/web/pdf_viewer.css";
+import "@/lib/setup";
 import { SearchUI } from "./custom-search";
-
-GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.mjs",
-  import.meta.url
-).toString();
 
 const fileUrl = "/pdf/large.pdf";
 

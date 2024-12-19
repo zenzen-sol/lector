@@ -1,21 +1,8 @@
 "use client";
-import {
-  AnnotationLayer,
-  CanvasLayer,
-  Page,
-  Pages,
-  Root,
-  TextLayer,
-} from "@unriddle-ai/pdf-viewer";
+import { AnnotationLayer, CanvasLayer, Page, Pages, Root, TextLayer } from "@unriddle-ai/lector";
 import React from "react";
 
-import "pdfjs-dist/web/pdf_viewer.css";
-import { GlobalWorkerOptions } from "pdfjs-dist";
-
-GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.mjs",
-  import.meta.url
-).toString();
+import "@/lib/setup";
 
 const fileUrl = "/pdf/form.pdf";
 const PdfFormLayer = () => {

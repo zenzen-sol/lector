@@ -1,14 +1,7 @@
 "use client";
 
-import { CanvasLayer, Page, Pages, Root, TextLayer } from "@unriddle-ai/pdf-viewer";
-import { GlobalWorkerOptions } from "pdfjs-dist";
-
-import "pdfjs-dist/web/pdf_viewer.css";
-
-GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.mjs",
-  import.meta.url
-).toString();
+import { CanvasLayer, Page, Pages, Root, TextLayer } from "@unriddle-ai/lector";
+import "@/lib/setup";
 
 const fileUrl = "/pdf/large.pdf";
 

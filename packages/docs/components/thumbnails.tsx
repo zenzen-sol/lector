@@ -12,17 +12,11 @@ import {
   Thumbnails,
   ZoomIn,
   ZoomOut,
-} from "@unriddle-ai/pdf-viewer";
+} from "@unriddle-ai/lector";
 import { cn } from "fumadocs-ui/components/api";
 import { useState } from "react";
-import { GlobalWorkerOptions } from "pdfjs-dist";
 
-import "pdfjs-dist/web/pdf_viewer.css";
-
-GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.mjs",
-  import.meta.url
-).toString();
+import "@/lib/setup";
 
 const fileUrl = "/pdf/pathways.pdf";
 

@@ -1,25 +1,18 @@
 "use client";
 
-import { CanvasLayer, Page, Pages, Root } from "@unriddle-ai/pdf-viewer";
+import { CanvasLayer, Page, Pages, Root } from "@unriddle-ai/lector";
 import React from "react";
+import "@/lib/setup";
 
 const fileUrl = "/pdf/pathways.pdf";
-
-import "pdfjs-dist/web/pdf_viewer.css";
-import { GlobalWorkerOptions } from "pdfjs-dist";
-
-GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.mjs",
-  import.meta.url
-).toString();
 
 const Basic = () => {
   return (
     <Root
       fileURL={fileUrl}
-      className='bg-gray-100 border rounded-md overflow-hidden relative h-[500px]'
+      className='w-full h-[500px] border overflow-hidden rounded-lg'
       loader={<div className='p-4'>Loading...</div>}>
-      <Pages className='p-4 h-full'>
+      <Pages className='dark:invert-[94%] dark:hue-rotate-180 dark:brightness-[80%] dark:contrast-[228%]'>
         <Page>
           <CanvasLayer />
         </Page>
