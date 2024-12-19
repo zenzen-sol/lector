@@ -124,5 +124,5 @@ jobs:
         run: ../../node_modules/.bin/semantic-release
         working-directory: packages/lector
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
