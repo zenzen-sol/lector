@@ -25,6 +25,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v2
         with:
@@ -40,6 +41,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Run lint
+        run: pnpm lint
+
   test:
     name: Testing
     runs-on: ubuntu-latest
@@ -53,6 +57,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v2
         with:
@@ -74,8 +79,8 @@ jobs:
       - name: Build package
         run: pnpm build
 
-  publish:
-    name: Publish
+  release:
+    name: Release
     needs: [lint, test]
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
@@ -83,6 +88,9 @@ jobs:
       contents: write
       pages: write
       id-token: write
+      issues: write
+      pull-requests: write
+
     steps:
       - uses: actions/create-github-app-token@v1
         id: app-token
@@ -93,6 +101,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v2
         with:
@@ -106,33 +115,14 @@ jobs:
           cache-dependency-path: ./pnpm-lock.yaml
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --ignore-scripts --frozen-lockfile --filter lector...
 
       - name: Build package
-        run: pnpm build
+        run: pnpm build --filter lector
 
-      - name: Configure Git
-        run: |
-          git config --global user.email "support@unriddle.com"
-          git config --global user.name "github-actions[bot]"
-
-      - name: Version and Tag
-        id: version
-        run: |
-          tag=$(npm version patch -m 'Bump version to %s [skip ci]')
-          tag_without_v=${tag#v}
-          echo "tag=$tag_without_v" >> "$GITHUB_OUTPUT"
-
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.version.outputs.tag }}
-          body: "Release ${{ steps.version.outputs.tag }}. Check it out on [NPM ➡️](https://www.npmjs.com/package/@unriddle-ai/lector/v/${{ steps.version.outputs.tag }})."
-
-      - name: Publish to NPM
-        run: pnpm publish --access public
+      - name: Semantic Release
+        run: ../../node_modules/.bin/semantic-release
+        working-directory: packages/lector
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Push changes
-        run: git push origin
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
