@@ -1,53 +1,176 @@
 ---
-title: Basic usage
-description: Replacing React.useState with useQueryState
+title: Basic Usage
+description: Learn how to use Lector's core components and features
 ---
 
-<Callout title='Prerequisite'>
-  Have you setup your app with the appropriate [**adapter**](./adapters)? Then you are all set!
-</Callout>
+# Getting Started with Lector
 
-Supports:
+Lector provides a set of composable components that you can use to build a custom PDF viewer. This guide will walk you through the core concepts and basic usage.
 
-- Panning and zooming, including keyboard and mouse controls
-- Text selection
-- Annotations and links (including internal!)
-- Customizable toolbar
-- Customizable page rendering
-- Outline and thumbnail navigation
+## Core Concepts
 
-## Usage
+Lector follows a component-based architecture with three main layers:
 
-To get started, you will need to create a basic PDFReader component:
+1. **Root Container**: Manages the PDF document state and context
+2. **Pages Container**: Handles page layout and virtualization
+3. **Layer Components**: Render different aspects of each page (canvas, text, annotations)
 
-```jsx
-import { Root, Viewport, Pages, Page } from "@unriddle-ai/lector";
+## Basic Setup
+
+First, set up the PDF.js worker:
+
+```tsx
 import { GlobalWorkerOptions } from "pdfjs-dist";
-
 import "pdfjs-dist/web/pdf_viewer.css";
 
+// Set up the worker
 GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.mjs",
   import.meta.url
 ).toString();
+```
 
-const MyPDFReader = () => (
-  <Root fileURL='path/to/my.pdf'>
-    <Viewport>
+## Creating a Basic Viewer
+
+Here's a minimal example of a PDF viewer:
+
+```tsx
+import { Root, Pages, Page, CanvasLayer, TextLayer } from "@unriddle-ai/lector";
+
+function PDFViewer() {
+  return (
+    <Root fileURL='/sample.pdf' className='w-full h-[600px] border rounded-lg overflow-hidden'>
+      <Pages className='p-4'>
+        <Page>
+          <CanvasLayer />
+          <TextLayer />
+        </Page>
+      </Pages>
+    </Root>
+  );
+}
+```
+
+## Core Components
+
+### Root Component
+
+The `Root` component is the main container that manages the PDF document state:
+
+```tsx
+<Root
+  fileURL='/path/to/pdf' // URL or path to PDF file
+  className='...' // Container styling
+  loader={<Loading />} // Custom loading component
+  onLoad={handleLoad} // Called when PDF is loaded
+  onError={handleError} // Called on load error
+>
+  {/* Child components */}
+</Root>
+```
+
+### Pages Component
+
+The `Pages` component handles page layout and virtualization:
+
+```tsx
+<Pages
+  className='...' // Container styling
+  pageClassName='...' // Individual page styling
+  initialPage={1} // Initial page to display
+  pageSize={800} // Base page width in pixels
+>
+  {/* Page component */}
+</Pages>
+```
+
+### Page Layers
+
+Each page can have multiple layers for different functionality:
+
+```tsx
+<Page>
+  <CanvasLayer /> {/* Renders the PDF content */}
+  <TextLayer /> {/* Enables text selection */}
+  <AnnotationLayer /> {/* Renders annotations and links */}
+  <HighlightLayer /> {/* Custom highlight overlay */}
+</Page>
+```
+
+## Common Features
+
+### Adding Zoom Controls
+
+```tsx
+import { ZoomIn, ZoomOut, CurrentZoom } from "@unriddle-ai/lector";
+
+function PDFViewerWithZoom() {
+  return (
+    <Root fileURL='/sample.pdf'>
+      <div className='flex gap-2 p-2'>
+        <ZoomOut />
+        <CurrentZoom />
+        <ZoomIn />
+      </div>
       <Pages>
         <Page>
           <CanvasLayer />
+          <TextLayer />
         </Page>
       </Pages>
-    </Viewport>
-  </Root>
-);
+    </Root>
+  );
+}
 ```
 
-The examples below have been styled with `tailwindcss` but you could use any other CSS framework or style. Styles needed for the PDFReader components to work properly are included in the package.
+### Adding Page Navigation
 
-## Examples
+```tsx
+import { CurrentPage, PageCount } from "@unriddle-ai/lector";
 
-### Other examples
+function PDFViewerWithNavigation() {
+  return (
+    <Root fileURL='/sample.pdf'>
+      <div className='flex items-center gap-2 p-2'>
+        <CurrentPage /> of <PageCount />
+      </div>
+      <Pages>
+        <Page>
+          <CanvasLayer />
+          <TextLayer />
+        </Page>
+      </Pages>
+    </Root>
+  );
+}
+```
 
-Other examples can be found by clicking on the menu links.
+## Supported Features
+
+Lector includes support for:
+
+- 📱 Responsive layout with automatic page scaling
+- 🖱️ Pan and zoom with mouse/touch controls
+- ✨ Text selection and copying
+- 🔗 Internal and external link handling
+- 📑 Page thumbnails and outline navigation
+- 🎨 Custom rendering and annotations
+- 🌗 Dark mode support
+
+## Next Steps
+
+Check out these guides to learn more:
+
+<Cards>
+  <Card
+    title='Advanced Features'
+    href='/docs/code/thumbnails'
+    description='Learn about thumbnails, search, and more'
+  />
+  <Card
+    title='Customization'
+    href='/docs/code/basic'
+    description='Style and customize your PDF viewer'
+  />
+  <Card title='Examples' href='/docs/code' description='View more interactive examples' />
+</Cards>

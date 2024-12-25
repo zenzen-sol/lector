@@ -1,6 +1,6 @@
 "use client";
 
-import { CanvasLayer, Page, Pages, Root } from "@unriddle-ai/lector";
+import { CanvasLayer, Page, Pages, Root, TextLayer } from "@unriddle-ai/lector";
 import React from "react";
 import "@/lib/setup";
 
@@ -15,6 +15,7 @@ const Basic = () => {
       <Pages className='dark:invert-[94%] dark:hue-rotate-180 dark:brightness-[80%] dark:contrast-[228%]'>
         <Page>
           <CanvasLayer />
+          <TextLayer />
         </Page>
       </Pages>
     </Root>
