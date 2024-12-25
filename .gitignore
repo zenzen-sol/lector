@@ -55,3 +55,6 @@ bun.lockb
 
 # Mac
 .DS_Store
+
+# Cursor
+.cursorrules

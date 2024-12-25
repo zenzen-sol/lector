@@ -7,35 +7,41 @@
 
 # `lector`
 
-The JavaScript toolkit to build feature-rich PDF viewers with your own opinions, powered by `PDF.js` and `React`.
+A composable, headless PDF viewer toolkit for React applications, powered by `PDF.js`. Build feature-rich PDF viewing experiences with full control over the UI and functionality.
 
 [![npm version](https://badge.fury.io/js/@unriddle-ai%2Flector.svg)](https://www.npmjs.com/package/@unriddle-ai/lector)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Compose PDF viewing applications using simple, flexible primitives. The core building blocks in Lector are:
+## Installation
 
-- `Root` - The container component that manages PDF loading and context
-- `Pages` - A wrapper for managing page layout and interactions
-- `Page` - Individual page container with viewport management
-- `CanvasLayer` - The primitive for actual PDF rendering
+```bash
+npm install @unriddle-ai/lector pdfjs-dist
 
-## Core Concepts
+# or with yarn
+yarn add @unriddle-ai/lector pdfjs-dist
 
-Creating a new PDF viewer is as simple as composing these primitives:
+# or with pnpm
+pnpm add @unriddle-ai/lector pdfjs-dist
+```
 
-```jsx
-import { CanvasLayer, Page, Pages, Root } from "@unriddle-ai/lector";
+## Basic Usage
+
+Here's a simple example of how to create a basic PDF viewer:
+
+```tsx
+import { CanvasLayer, Page, Pages, Root, TextLayer } from "@unriddle-ai/lector";
+import "pdfjs-dist/web/pdf_viewer.css";
 
 export default function PDFViewer() {
   return (
     <Root
-      fileURL="/document.pdf"
-      className="w-full h-[500px]"
-      loader={<div>Loading...</div>}
-    >
-      <Pages>
+      fileURL='/sample.pdf'
+      className='w-full h-[500px] border overflow-hidden rounded-lg'
+      loader={<div className='p-4'>Loading...</div>}>
+      <Pages className='p-4'>
         <Page>
           <CanvasLayer />
+          <TextLayer />
         </Page>
       </Pages>
     </Root>
@@ -43,100 +49,32 @@ export default function PDFViewer() {
 }
 ```
 
-## Examples
+## Features
 
-| Category | Example | Description |
-|----------|---------|-------------|
-| Basic | Simple Viewer | Basic PDF viewer with single page layout |
-| Dark Mode | Theme Switcher | PDF viewer with automatic dark mode support |
-| Advanced | Multi-page Layout | Custom layout with multiple pages visible |
-| Custom | Thumbnail Navigator | Custom navigation with page thumbnails |
-
-## Goals
-
-Primary goal is to provide the essential building blocks needed to create PDF viewers without enforcing specific layouts or interaction patterns. The focus is on:
-
-1. Composable primitives that work together seamlessly
-2. First-class dark mode support
-3. Type-safe APIs with full TypeScript support
-4. Framework agnostic core (though initially React-focused)
-5. Simple integration with any styling solution
-
-## Installation
-
-```bash
-npm install @unriddle-ai/lector
-
-# or with yarn
-yarn add @unriddle-ai/lector
-
-# or with pnpm
-pnpm add @unriddle-ai/lector
-```
-
-## Core Components
-
-### Root
-
-The container component that manages PDF loading and context:
-
-```jsx
-<Root
-  fileURL="/path/to/document.pdf"
-  className="w-full h-screen"
-  loader={<CustomLoader />}
->
-  {children}
-</Root>
-```
-
-### Pages
-
-Container for managing page layout and interactions:
-
-```jsx
-<Pages 
-  className="dark:invert-[94%]"
-  layout="single"
->
-  {children}
-</Pages>
-```
-
-### Page
-
-Individual page container with viewport management:
-
-```jsx
-<Page
-  pageNumber={1}
-  className="shadow-lg"
->
-  {children}
-</Page>
-```
-
-### CanvasLayer
-
-The primitive for actual PDF rendering:
-
-```jsx
-<CanvasLayer
-  className="antialiased"
-  scale={1.5}
-/>
-```
+- 📱 Responsive and mobile-friendly
+- 🎨 Fully customizable UI components
+- 🔍 Text selection and search functionality
+- 📑 Page thumbnails and outline navigation
+- 🌗 First-class dark mode support
+- 🖱️ Pan and zoom controls
+- 📝 Form filling support
+- 🔗 Internal and external link handling
 
 ## Contributing
 
-We welcome contributions! The surface layer we are intending to tackle:
+We welcome contributions! Key areas we're focusing on:
 
-1. Core rendering primitives
-2. Accessibility features
-3. Touch/mobile interactions
-4. Advanced navigation features
-5. Thumbnail generation
-6. Search functionality
+1. Performance optimizations
+2. Accessibility improvements
+3. Mobile/touch interactions
+4. Documentation and examples
+
+## Thanks
+
+Special thanks to these open-source projects that provided inspiration:
+
+- [react-pdf-headless](https://github.com/jkgenser/react-pdf-headless)
+- [pdfreader](https://github.com/OnedocLabs/pdfreader)
 
 ## License
 
