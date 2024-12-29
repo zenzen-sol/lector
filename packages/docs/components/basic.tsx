@@ -10,9 +10,10 @@ const Basic = () => {
   return (
     <Root
       fileURL={fileUrl}
-      className='w-full h-[500px] border overflow-hidden rounded-lg'
-      loader={<div className='p-4'>Loading...</div>}>
-      <Pages className='dark:invert-[94%] dark:hue-rotate-180 dark:brightness-[80%] dark:contrast-[228%]'>
+      className="w-full h-[500px] border overflow-hidden rounded-lg"
+      loader={<div className="p-4">Loading...</div>}
+    >
+      <Pages className="dark:invert-[94%] dark:hue-rotate-180 dark:brightness-[80%] dark:contrast-[228%]">
         <Page>
           <CanvasLayer />
           <TextLayer />

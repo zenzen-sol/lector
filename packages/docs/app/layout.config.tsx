@@ -12,8 +12,15 @@ export const baseOptions: BaseLayoutProps = {
   nav: {
     title: (
       <>
-        <Image alt='Fumadocs' src={Logo} className='w-5 h-5' aria-label='Fumadocs' />
-        <span className='font-medium [.uwu_&]:hidden [header_&]:text-[15px]'>Lector</span>
+        <Image
+          alt="Fumadocs"
+          src={Logo}
+          className="w-5 h-5"
+          aria-label="Fumadocs"
+        />
+        <span className="font-medium [.uwu_&]:hidden [header_&]:text-[15px]">
+          Lector
+        </span>
       </>
     ),
     transparentMode: "top",
