@@ -9,7 +9,7 @@ const fileUrl = "/pdf/pathways.pdf";
 const Basic = () => {
   return (
     <Root
-      fileURL={fileUrl}
+      source={fileUrl}
       className="w-full h-[500px] border overflow-hidden rounded-lg"
       loader={<div className="p-4">Loading...</div>}
     >

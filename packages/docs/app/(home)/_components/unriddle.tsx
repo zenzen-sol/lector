@@ -20,7 +20,7 @@ export const UnriddleViewer = () => {
   return (
     <Root
       className="border overflow-hidden flex flex-col w-full h-[600px] rounded-lg"
-      fileURL={fileUrl}
+      source={fileUrl}
       isZoomFitWidth={true}
       loader={<div className="w-full"></div>}
     >

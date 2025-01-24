@@ -35,10 +35,11 @@ import "pdfjs-dist/web/pdf_viewer.css";
 export default function PDFViewer() {
   return (
     <Root
-      fileURL='/sample.pdf'
-      className='w-full h-[500px] border overflow-hidden rounded-lg'
-      loader={<div className='p-4'>Loading...</div>}>
-      <Pages className='p-4'>
+      source="/sample.pdf"
+      className="w-full h-[500px] border overflow-hidden rounded-lg"
+      loader={<div className="p-4">Loading...</div>}
+    >
+      <Pages className="p-4">
         <Page>
           <CanvasLayer />
           <TextLayer />

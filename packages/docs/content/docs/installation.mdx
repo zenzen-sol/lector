@@ -49,7 +49,7 @@ GlobalWorkerOptions.workerSrc = new URL(
 
 export function PDFViewer() {
   return (
-    <Root fileURL='/sample.pdf'>
+    <Root source='/sample.pdf'>
       <Pages>
         <Page>
           <CanvasLayer />
@@ -71,7 +71,7 @@ import "pdfjs-dist/web/pdf_viewer.css";
 
 export function PDFViewer() {
   return (
-    <Root fileURL='/sample.pdf'>
+    <Root source='/sample.pdf'>
       <Pages>
         <Page>
           <CanvasLayer />
@@ -100,7 +100,7 @@ import { Root, Pages, Page, CanvasLayer } from "@unriddle-ai/lector";
 
 function BasicPDFViewer() {
   return (
-    <Root fileURL='/sample.pdf'>
+    <Root source='/sample.pdf'>
       <Pages>
         <Page>
           <CanvasLayer />

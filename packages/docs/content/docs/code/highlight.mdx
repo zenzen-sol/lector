@@ -25,7 +25,7 @@ import {
 
 export default function MyPdfViewer() {
   return (
-    <Root fileURL="/my-document.pdf">
+    <Root source="/my-document.pdf">
       <Pages>
         <Page>
           <CanvasLayer />
@@ -121,7 +121,7 @@ Add a loading state to improve user experience:
 
 ```tsx
 <Root
-  fileURL={fileUrl}
+  source={fileUrl}
   className="bg-gray-50"
   loader={<div className="p-4">Loading PDF...</div>}
 >

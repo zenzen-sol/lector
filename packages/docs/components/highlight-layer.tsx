@@ -157,7 +157,7 @@ const HighlightLayerContent = () => {
 
 const PdfHighlightLayer = () => (
   <Root
-    fileURL={fileUrl}
+    source={fileUrl}
     className="flex bg-gray-50 h-[500px]"
     loader={<div className="p-4">Loading...</div>}
   >

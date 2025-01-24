@@ -66,7 +66,7 @@ const PdfFormLayer = () => {
           </button>
 
           <Root
-            fileURL={fileUrl}
+            source={fileUrl}
             className="bg-gray-100 border rounded-md overflow-hidden relative h-[700px]"
             loader={<div className="p-4">Loading...</div>}
           >
