@@ -115,7 +115,7 @@ const HighlightLayerContent = () => {
     try {
       setSelectedExample(example.text);
 
-      jumpToHighlightRects(example.highlights, "pixels");
+      jumpToHighlightRects(example.highlights, "pixels", "center");
     } catch (error) {
       console.error("Error highlighting text:", error);
     }
