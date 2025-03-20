@@ -1,7 +1,7 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
-// import Image from "next/image";
+import Image from "next/image";
 
-// import Logo from "@/public/logo.png";
+import Logo from "@/public/logo.png";
 
 /**
  * Shared layout configurations
@@ -12,12 +12,12 @@ export const baseOptions: BaseLayoutProps = {
   nav: {
     title: (
       <>
-        {/* <Image
+        <Image
           alt="Fumadocs"
           src={Logo}
           className="w-5 h-5"
           aria-label="Fumadocs"
-        /> */}
+        />
         <span className="font-medium [.uwu_&]:hidden [header_&]:text-[15px]">
           Lector
         </span>
