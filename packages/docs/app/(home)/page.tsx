@@ -15,7 +15,7 @@ export default function Home() {
             Breaking Change: Repository Name Update
           </h2>
           <p className="text-sm">
-            We've changed our name from <strong>unriddle-ai</strong> to{" "}
+            We&apos;ve changed our name from <strong>unriddle-ai</strong> to{" "}
             <strong>anaralabs</strong>. Please update your dependencies from{" "}
             <code className="bg-amber-100 px-1.5 py-0.5 rounded text-amber-900">
               @unriddle-ai/lector
