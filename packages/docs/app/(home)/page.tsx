@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { UnriddleViewer } from "./_components/unriddle";
+import { AnaraViewer } from "./_components/anara";
 import { ArrowRight, Github } from "lucide-react";
 import { Icon } from "@/components/ui/icon";
 import { GithubStarsButton } from "./_components/github-stars-button";
@@ -11,7 +11,7 @@ export default function Home() {
       <div className="flex flex-col lg:w-1/2 gap-6 justify-center">
         <div className="flex flex-col gap-4">
           <a
-            href="https://github.com/unriddle-ai/lector"
+            href="https://github.com/anaralabs/lector"
             target="_blank"
             rel="noreferrer"
             className="inline-flex hover:bg-[#ff7a00]/20 transition-colors items-center gap-2 text-sm bg-[#ff7a00]/10 text-[#ff7a00] px-4 py-1 rounded-full w-fit"
@@ -58,7 +58,7 @@ export default function Home() {
       </div>
 
       <div className="lg:w-1/2 rounded-lg overflow-hidden borde shadow-xl backdrop-blur-sm bg-white/5">
-        <UnriddleViewer />
+        <AnaraViewer />
       </div>
     </div>
   );
