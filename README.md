@@ -79,4 +79,4 @@ Special thanks to these open-source projects that provided inspiration:
 
 ## License
 
-MIT © [Unriddle AI]()
+MIT © [Anara](https://anara.com)
