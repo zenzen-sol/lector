@@ -101,9 +101,6 @@ export async function calculateHighlightRects(
 
 			if (offsetNeededNormalized < spaceLen) {
 				startIndexInItemRaw = 0;
-				console.warn(
-					"[calculateHighlightRects] Match start index fell within an inferred space. Highlighting starts at beginning of the raw item string.",
-				);
 			} else {
 				startIndexInItemRaw = offsetNeededNormalized - spaceLen;
 			}

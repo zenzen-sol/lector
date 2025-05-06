@@ -18,7 +18,6 @@ export interface SearchResults {
 }
 
 function levenshteinDistance(a: string, b: string): number {
-	// Initialize with explicit type for better inference
 	const matrix = [] as number[][];
 
 	// Initialize first row (array)
@@ -28,13 +27,14 @@ function levenshteinDistance(a: string, b: string): number {
 
 	// Initialize first column
 	for (let j = 0; j <= a.length; j++) {
-		matrix[0]![j] = j; // Use non-null assertion since we know index 0 exists
+		matrix[0]![j] = j; // Use non-null assertion
 	}
 
 	// Fill the matrix
 	for (let i = 1; i <= b.length; i++) {
 		for (let j = 1; j <= a.length; j++) {
-			if (b.charAt(i - 1) === a.charAt(j - 1)) {
+			if (b[i - 1] === a[j - 1]) {
+				// Using index access is fine
 				matrix[i]![j] = matrix[i - 1]![j - 1]!;
 			} else {
 				matrix[i]![j] = Math.min(
@@ -64,82 +64,88 @@ export const useSearch = () => {
 		hasMoreResults: false,
 	});
 
-	const findExactMatches = (
-		searchText: string,
-		text: string,
-		pageNumber: number,
-		textSize: number,
-	): SearchResult[] => {
-		const results: SearchResult[] = [];
-		const textLower = text.toLowerCase();
-		const searchLower = searchText.toLowerCase();
-		let index = 0;
+	const findExactMatches = useCallback(
+		(
+			searchText: string,
+			text: string,
+			pageNumber: number,
+			textSize: number,
+		): SearchResult[] => {
+			const results: SearchResult[] = [];
+			const textLower = text.toLowerCase();
+			const searchLower = searchText.toLowerCase();
+			let index = 0;
 
-		while (true) {
-			const matchIndex = textLower.indexOf(searchLower, index);
-			if (matchIndex === -1) break;
+			while (true) {
+				const matchIndex = textLower.indexOf(searchLower, index);
+				if (matchIndex === -1) break;
 
-			results.push({
-				pageNumber,
-				text: text.substr(matchIndex, searchText.length + textSize),
-				score: 1,
-				matchIndex,
-				isExactMatch: true,
-				searchText,
-			});
-
-			index = matchIndex + searchText.length;
-		}
-
-		return results;
-	};
-
-	const findFuzzyMatches = (
-		searchText: string,
-		text: string,
-		pageNumber: number,
-		threshold: number,
-		excludeIndices: Set<number>,
-		textSize: number,
-	): SearchResult[] => {
-		const results: SearchResult[] = [];
-		const textLower = text.toLowerCase();
-		const searchLower = searchText.toLowerCase();
-		let index = 0;
-
-		while (index < textLower.length) {
-			// Skip if this index is part of an exact match
-			if (excludeIndices.has(index)) {
-				index++;
-				continue;
-			}
-
-			const chunk = textLower.substr(index, searchLower.length + 10);
-			const distance = levenshteinDistance(
-				searchLower,
-				chunk.substr(0, searchLower.length),
-			);
-			const maxDistance = Math.floor(searchLower.length * (1 - threshold));
-
-			if (distance <= maxDistance && distance > 0) {
-				// distance > 0 ensures we don't duplicate exact matches
-				const score = 1 - distance / searchLower.length;
 				results.push({
 					pageNumber,
-					text: text.substr(index, searchLower.length + textSize),
-					score,
-					matchIndex: index,
-					isExactMatch: false,
+					text: text.substr(matchIndex, searchText.length + textSize),
+					score: 1,
+					matchIndex,
+					isExactMatch: true,
 					searchText,
 				});
-				index += searchLower.length;
-			} else {
-				index++;
-			}
-		}
 
-		return results;
-	};
+				index = matchIndex + searchText.length;
+			}
+
+			return results;
+		},
+		[],
+	);
+
+	const findFuzzyMatches = useCallback(
+		(
+			searchText: string,
+			text: string,
+			pageNumber: number,
+			threshold: number,
+			excludeIndices: Set<number>,
+			textSize: number,
+		): SearchResult[] => {
+			const results: SearchResult[] = [];
+			const textLower = text.toLowerCase();
+			const searchLower = searchText.toLowerCase();
+			let index = 0;
+
+			while (index < textLower.length) {
+				// Skip if this index is part of an exact match
+				if (excludeIndices.has(index)) {
+					index++;
+					continue;
+				}
+
+				const chunk = textLower.substr(index, searchLower.length + 10);
+				const distance = levenshteinDistance(
+					searchLower,
+					chunk.substr(0, searchLower.length),
+				);
+				const maxDistance = Math.floor(searchLower.length * (1 - threshold));
+
+				if (distance <= maxDistance && distance > 0) {
+					// distance > 0 ensures we don't duplicate exact matches
+					const score = 1 - distance / searchLower.length;
+					results.push({
+						pageNumber,
+						text: text.substr(index, searchLower.length + textSize),
+						score,
+						matchIndex: index,
+						isExactMatch: false,
+						searchText,
+					});
+					index += searchLower.length;
+				} else {
+					index++;
+				}
+			}
+
+			return results;
+		},
+		[],
+	);
 
 	const search = useCallback(
 		(searchText: string, options: SearchOptions = {}): SearchResults => {
@@ -177,18 +183,21 @@ export const useSearch = () => {
 				});
 			});
 
-			// Then find fuzzy matches, excluding exact match locations
-			textContent.forEach(({ pageNumber, text }) => {
-				const matches = findFuzzyMatches(
-					searchText,
-					text,
-					pageNumber,
-					threshold,
-					exactMatchIndices,
-					textSize,
-				);
-				fuzzyMatches = [...fuzzyMatches, ...matches];
-			});
+			// Only run fuzzy search if no exact matches were found
+			if (exactMatches.length === 0) {
+				// Find fuzzy matches, excluding exact match locations (though none exist here)
+				textContent.forEach(({ pageNumber, text }) => {
+					const matches = findFuzzyMatches(
+						searchText,
+						text,
+						pageNumber,
+						threshold,
+						exactMatchIndices, // Will be empty in this branch
+						textSize,
+					);
+					fuzzyMatches = [...fuzzyMatches, ...matches];
+				});
+			} // else: fuzzyMatches remains []
 
 			// Sort both sets of results by score
 			exactMatches.sort((a, b) => b.score - a.score);
@@ -207,7 +216,7 @@ export const useSearch = () => {
 			setSearchResults(limitedResults);
 			return limitedResults;
 		},
-		[textContent],
+		[textContent, findExactMatches, findFuzzyMatches],
 	);
 
 	return {
