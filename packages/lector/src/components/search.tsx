@@ -18,24 +18,76 @@ export const Search = ({ children, loading = "Loading..." }: SearchProps) => {
 	const getTextContent = useCallback(
 		async (pages: PDFPageProxy[]) => {
 			console.debug(
-				"[Search Component] getTextContent called for initial text extraction.",
+				"[Search Component] [002] getTextContent called for initial text extraction and normalization.",
 			);
 			setIsLoading(true);
 			const promises = pages.map(async (proxy) => {
-				const content = await proxy.getTextContent();
-				const text = content.items
-					.map((item) => (item as TextItem)?.str || "")
-					.join("");
+				const content = await proxy.getTextContent({
+					includeMarkedContent: true,
+					disableNormalization: true,
+				});
+
+				let normalizedText = "";
+				let lastY = Number.NEGATIVE_INFINITY;
+				let lastX = Number.NEGATIVE_INFINITY;
+				let lastItemStr = "";
+
+				const sortedItems = content.items
+					.filter(
+						(item): item is TextItem => "transform" in item && "str" in item,
+					)
+					.sort((a, b) => {
+						const yDiff = a.transform[5] - b.transform[5];
+						if (Math.abs(yDiff) > 1) {
+							return yDiff;
+						}
+						return a.transform[4] - b.transform[4];
+					});
+
+				for (const item of sortedItems) {
+					const currentStr = item.str || "";
+					if (!currentStr.trim()) continue;
+
+					const currentY = item.transform[5];
+					const currentX = item.transform[4];
+
+					const isNewLine = currentY > lastY + (item.height || 5);
+
+					if (
+						isNewLine &&
+						lastItemStr &&
+						!lastItemStr.endsWith("-") &&
+						!currentStr.startsWith(" ")
+					) {
+						normalizedText += " ";
+					} else if (
+						!isNewLine &&
+						lastItemStr &&
+						currentX > lastX + 1 &&
+						!lastItemStr.endsWith(" ") &&
+						!currentStr.startsWith(" ")
+					) {
+						// Optional: Add space for horizontal gaps on the same line
+						// Might need tuning based on typical spacing vs word gaps
+						// normalizedText += " ";
+					}
+
+					normalizedText += currentStr;
+
+					lastY = currentY;
+					lastX = currentX;
+					lastItemStr = currentStr.trimEnd();
+				}
 
 				return Promise.resolve({
 					pageNumber: proxy.pageNumber,
-					text,
+					text: normalizedText.trim(),
 				});
 			});
-			const text = await Promise.all(promises);
+			const textContentsForStore = await Promise.all(promises);
 
 			setIsLoading(false);
-			setTextContent(text);
+			setTextContent(textContentsForStore);
 		},
 		[setTextContent],
 	);
