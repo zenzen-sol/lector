@@ -53,6 +53,9 @@ bun.lockb
 .eslintcache
 .vercel
 
+# pnpm link artifacts
+packages/lector/~/
+
 # Mac
 .DS_Store
 
