@@ -5,3 +5,7 @@ dist
 .env.development
 
 bun.lockb
+
+# local artifacts
+.node-version
+~/pnpm/*
