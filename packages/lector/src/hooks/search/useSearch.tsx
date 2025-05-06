@@ -56,7 +56,7 @@ interface SearchOptions {
 }
 
 export const useSearch = () => {
-	console.debug("[useSearch] CONFIRMED");
+	// console.debug("[useSearch] CONFIRMED");
 	const textContent = usePdf((state) => state.textContent);
 	const [keywords] = useState<string[]>([]);
 	const [searchResults, setSearchResults] = useState<SearchResults>({
