@@ -1,5 +1,5 @@
 {
-	"name": "@anaralabs/lector",
+	"name": "@zenzen-sol/lector",
 	"version": "0.0.0-semantically-released",
 	"description": "Headless PDF viewer for React",
 	"author": "andrewdr (https://github.com/andrewdoro)",

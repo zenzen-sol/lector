@@ -103,7 +103,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_PAT }}
 
       - name: Build package
-        run: pnpm build --filter @anaralabs/lector
+        run: pnpm build --filter @zenzen-sol/lector
 
       - name: Set execute permissions
         run: chmod +x ./packages/lector/scripts/prepack.sh
